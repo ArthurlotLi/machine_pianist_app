@@ -38,7 +38,10 @@ export class App extends React.Component {
 
         <div id="tool">
           <div id="toolInner">
-            Play your song!
+            <div id="toolInterface">
+              <input id="toolInterfaceInput"/>
+              <button id="toolInterfaceButtonPerform">Perform</button>
+            </div>
           </div>
         </div>
 

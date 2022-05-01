@@ -5,7 +5,7 @@
 */
 
 :root {
-  --primary-color: rgb(190, 167, 91);
+  --primary-color: rgb(29, 29, 29);
   --secondary-color: rgb(255, 255, 255);
   --tertiary-color: #99004d;
   --highlight-color: black;
@@ -90,14 +90,36 @@ body{
   position: absolute;
   left: 0%;
   width: 100%;
-  top: 10%;
+  top: max(min(20%, 200px), 100px);
+  height: max(min(15%, 200px), 100px);
 }
 
 #toolInner{
   width: min(100%, var(--max-total-width));
-  background-color: rgba(36, 36, 36, 0.9);
-  color:var(--secondary-color);
   margin: 0 auto;
+  height: 100%;
+}
+
+#toolInterface{
+  background-color: rgba(0, 0, 0, 0.9);
+  color:var(--secondary-color);
+  width: max(50%, 450px);
+  margin: 0 auto;
+  height: 70px;
+  display: flex;
+}
+
+#toolInterfaceInput{
+  flex: 75%;
+  margin-left:15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+#toolInterfaceButtonPerform{
+  flex: 25%;
+  margin-right:15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 #info {
