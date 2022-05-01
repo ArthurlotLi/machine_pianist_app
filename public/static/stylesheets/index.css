@@ -5,11 +5,12 @@
 */
 
 :root {
-  --primary-color: #303030;
-  --secondary-color: #e6e6e6;
+  --primary-color: rgb(190, 167, 91);
+  --secondary-color: rgb(255, 255, 255);
   --tertiary-color: #99004d;
   --highlight-color: black;
-  --text-color: #fff;
+  --text-color: black;
+  --max-total-width: 1280px;
 }
 
 html{
@@ -19,4 +20,118 @@ html{
 body{
   background-color: var(--primary-color);
   color: var(--text-color);
+}
+
+#header{
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.9);
+  width: 100%;
+  top: 0%;
+  left: 0%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 0;
+  padding-right: 0;
+  height: min(max(4.5vw, 50px), 60px);
+}
+
+#headerInner{
+  width: min(100%, var(--max-total-width));
+  max-height: 100%;
+  margin: 0 auto;
+  display: flex;
+}
+
+#title{
+  flex: 75%;
+  font-size: max(min(3.3vw, 45px), 35px);
+  left: 0%;
+  padding-left: min(15px, 0.8%);
+  display:block;
+  color:var(--secondary-color);
+}
+
+#about{
+  flex: 0%;
+  right: 0%;
+  padding-right: 10px;
+  padding-top: 10px;
+  display:block;
+}
+
+#aboutButton {
+  right:0%;
+}
+
+#mainBackground {
+  width: 100%;
+  position: absolute;
+  left:0%;
+  top: 0%;
+  bottom:0;
+  overflow:hidden;
+}
+
+#mainBackgroundInner{
+  width: min(100%, var(--max-total-width));
+  max-height: 100%;
+  margin: 0 auto;
+  overflow:hidden;
+}
+
+#mainBackgroundImg {
+  margin: 0 auto;
+  width: min(100%, var(--max-total-width));
+  max-height: 100%;
+  min-width: 800px;
+}
+
+#tool{
+  position: absolute;
+  left: 0%;
+  width: 100%;
+  top: 10%;
+}
+
+#toolInner{
+  width: min(100%, var(--max-total-width));
+  background-color: rgba(36, 36, 36, 0.9);
+  color:var(--secondary-color);
+  margin: 0 auto;
+}
+
+#info {
+  position: absolute; 
+  top: max(min(40%, 500px), 300px);
+  left: 0%;
+  width: 100%;
+  bottom:0;
+}
+
+#infoInner{
+  width: min(100%, var(--max-total-width));
+  margin: 0 auto;
+  background-color: var(--secondary-color);
+  bottom: 0;
+  height: fit-content;
+  min-height: 100%;
+}
+
+#charts{
+  display: flex;
+}
+
+.chartImg{
+  flex: 33.33%;
+  padding: 5px;
+  width: min(25.33%, 500px);
+  display: block;
+}
+
+#infotext{
+  margin-top: 0;
+  margin-left: min(5%, 20px);
+  margin-right: min(5%, 20px);
+  padding-bottom: 20px;
+  height: fit-content;
 }
