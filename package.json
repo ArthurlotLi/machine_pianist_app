@@ -1,0 +1,11 @@
+{
+  "name": "machine_pianist_app",
+  "version": "1.0.0",
+  "description": "Using the power of machine learning to humanize automatic piano performances to the benfit of both composer and audience.",
+  "main": "index.js",
+  "scripts": {
+    "test": "debug"
+  },
+  "author": "Arthurlot Li",
+  "license": "ISC"
+}
