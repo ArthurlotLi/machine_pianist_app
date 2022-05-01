@@ -4,8 +4,22 @@
   "description": "Using the power of machine learning to humanize automatic piano performances to the benfit of both composer and audience.",
   "main": "index.js",
   "scripts": {
-    "test": "debug"
+    "start": "node_modules\\.bin\\webpack ./public/static/libs/app.tsx --config webpack-config.js && node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Arthurlot Li",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/webpack": "^5.28.0",
+    "@types/webpack-env": "^1.16.0",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "path": "^0.12.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.2.4",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0"
+  }
 }

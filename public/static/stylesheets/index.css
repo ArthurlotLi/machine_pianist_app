@@ -1,0 +1,22 @@
+/*
+  index.css
+
+  Stylesheet for the main page. 
+*/
+
+:root {
+  --primary-color: #303030;
+  --secondary-color: #e6e6e6;
+  --tertiary-color: #99004d;
+  --highlight-color: black;
+  --text-color: #fff;
+}
+
+html{
+  font-family: -apple-system,BlinkMacSystemFont, "Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol","Noto Color Emoji";
+}
+
+body{
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
