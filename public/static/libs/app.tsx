@@ -1,22 +1,112 @@
 /*
   app.tsx
 
-  Primay script for front-facing web application functionality.
+  Primary script for front-facing web application functionality.
+  Apologies for any bad practices - this is a quickie deployment
+  website. -Arthur
 */
 
-var React = require('react');
-var ReactDOM = require('react-dom');
+const React = require('react');
+const ReactDOM = require('react-dom');
+import midiPlayerJs from "midi-player-js";
+
+const cloudInferenceMachinePianist = "/performMidi"
 
 export class App extends React.Component {
+  state = {
+    browserInstrument: 3,
+    selectedFile: null,
+    performanceMidi: null,
+    displayedFileName: "Select a MIDI file...",
+  };
+
   constructor(){
     super();
-    this.state = {}
   }
 
   // Executed only once upon startup.
   componentDidMount(){
     // TODO.
   }
+
+  onPlayInBrowser() {
+    if(this.state.performanceMidi == null){
+      alert("Please submit a MIDI file to be performed first!")
+      return
+    }
+
+    // Initialize player and register event handler
+    console.log("[DEBUG] Initializing new midi player js.");
+    var Player = new midiPlayerJs.Player(function(event) {
+      console.log(event)
+      if (event.name == 'Note on') {
+        //instrument.play(event.noteName, ac.currentTime, {gain:event.velocity/100});
+        //document.querySelector('#track-' + event.track + ' code').innerHTML = JSON.stringify(event);
+        console.log(event)
+      }
+    });
+
+    // Load our saved model. 
+    console.log(this.state.performanceMidi);
+    var buf = new ArrayBuffer(this.state.performanceMidi.length*2); // 2 bytes for each char
+    var bufView = new Uint16Array(buf);
+    for (var i=0, strLen=this.state.performanceMidi.length; i < strLen; i++) {
+    bufView[i] = this.state.performanceMidi.charCodeAt(i);
+    }
+
+    Player.loadArrayBuffer(buf);
+    Player.play();
+	}
+
+  // When the user has selected a new file. 0
+  onFileChange = event => {
+    this.setState({
+      selectedFile: event.target.files[0],
+      displayedFileName: event.target.files[0].name
+    })
+  };
+
+  // When the user submits a file. 
+  onPerformSong = () => {
+    // First, verify that the file is a MIDI. 
+    if(this.state.selectedFile.type != "audio/midi" && this.state.selectedFile.type != "audio/mid"){
+      console.log(`[ERROR] Invalid file type ${this.state.selectedFile.type} selected!`)
+      alert("Only .mid or .midi files are supported! Please select a valid file to perform.");
+      return
+    }
+
+    // Next, load the file string and encode it, before sending it.
+    const reader = new FileReader()
+    reader.onload = async (e) => { 
+      // Load the binary data. 
+      var text = (e.target.result).toString()
+
+      // Base64 encode the file string for HTTP transfer
+      let encodedString = Buffer.from(text.toString(), 'binary').toString('base64');
+
+      // Generate the form and send it off! 
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ "midi": encodedString })
+      };
+      console.log("[DEBUG] Submitting request to cloud inference server with body:", requestOptions)
+      var startTime = performance.now();
+      const response = await fetch(cloudInferenceMachinePianist, requestOptions);
+      const data = await response.json();
+      var endTime = performance.now();
+      var totalTime = (endTime - startTime)/1000;
+      console.log(`[DEBUG] Cloud Inference round-trip time: ${totalTime}. Return data:`, data)
+      
+      // We have our base64 encoded midi file with performance data! 
+      // Let's now decode it and store it.
+      let performanceMidi = Buffer.from(data['0'], "base64").toString();
+      this.setState({
+        performanceMidi: performanceMidi
+      })
+    };
+    reader.readAsBinaryString(this.state.selectedFile)
+  };
 
   render() {
     return (
@@ -39,8 +129,18 @@ export class App extends React.Component {
         <div id="tool">
           <div id="toolInner">
             <div id="toolInterface">
-              <input id="toolInterfaceInput"/>
-              <button id="toolInterfaceButtonPerform">Perform</button>
+              <div id="toolInterfaceMidi">
+                <label class="custom-file-upload">
+                  <div id="toolInterfaceInputFilename">{this.state.displayedFileName}</div>
+                  <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
+                </label>
+                <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Perform Song</button>
+              </div>
+              <div id="toolInterfacePerformance">
+                <button id="toolInterfaceButtonListen" onClick={this.onPlayInBrowser.bind(this)}>Play in Browser</button>
+                <button id="toolInterfaceButtonSaveMp3">Save Mp3</button>
+                <button id="toolInterfaceButtonSaveMidi">Save Midi</button>
+              </div>
             </div>
           </div>
         </div>

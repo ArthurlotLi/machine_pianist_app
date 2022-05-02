@@ -1,5 +1,6 @@
 {
   "compilerOptions":{
+    "esModuleInterop": true,
     "noImplicitAny": false,
     "module": "commonjs",
     "noEmitOnError": true,
@@ -8,7 +9,8 @@
     "target": "es5",
     "jsx": "react",
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "node"
     ],
     "lib": [
       "es2018", "dom"

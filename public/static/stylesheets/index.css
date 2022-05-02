@@ -7,7 +7,7 @@
 :root {
   --primary-color: rgb(29, 29, 29);
   --secondary-color: rgb(255, 255, 255);
-  --tertiary-color: #99004d;
+  --tertiary-color: #000000;
   --highlight-color: black;
   --text-color: black;
   --max-total-width: 1280px;
@@ -105,21 +105,62 @@ body{
   color:var(--secondary-color);
   width: max(50%, 450px);
   margin: 0 auto;
-  height: 70px;
+  height: 110px;
+}
+
+#toolInterfaceMidi{
   display: flex;
+  height: 35px;
+  padding: 15px;
+  padding-bottom: 0px;
+}
+
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+  flex: 65%;
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+  background-color: rgba(255, 255, 255, 0.9);
+  overflow:hidden;
 }
 
 #toolInterfaceInput{
-  flex: 75%;
-  margin-left:15px;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
 }
 #toolInterfaceButtonPerform{
   flex: 25%;
-  margin-right:15px;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+#toolInterfacePerformance{
+  display: flex;
+  height: 25px;
+  padding: 15px;
+}
+
+#toolInterfaceButtonListen{
+  background-color: var(--tertiary-color);
+  color: var(--secondary-color);
+  flex:10.33%;
+  margin-right: 5px;
+}
+#toolInterfaceButtonSaveMp3{
+  background-color: var(--tertiary-color);
+  color: var(--secondary-color);
+  flex:10.33%;
+}
+#toolInterfaceButtonSaveMidi{
+  background-color: var(--tertiary-color);
+  color: var(--secondary-color);
+  flex:10.33%;
+  margin-left: 5px;
 }
 
 #info {

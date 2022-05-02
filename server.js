@@ -13,6 +13,10 @@ const listeningPort = 8080;
 // Create the app
 const app = express();
 
+// Location of the 
+const cloudInferenceServerIp = "http://192.168.0.148"
+const cloudInferenceServerPort = 8080
+
 /*
   Web Application logic
 */
@@ -26,6 +30,39 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
+
+// Accept requests to play piano songs. Simple proxy middleware.
+app.post('/performMidi', async (req, res) => {
+  console.log("[DEBUG] /performMidi POST request received. Body length: " + JSON.stringify(req.body).length);
+  if(req.body.midi != null) {
+    var startTime = performance.now();
+    try{
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ "midi": req.body.midi })
+      };
+      const response = await fetch(cloudInferenceServerIp + ":" + cloudInferenceServerPort + "/performMidi", requestOptions);
+      var endTime = performance.now();
+      var totalTime = (endTime - startTime)/1000;
+      console.log(`[DEBUG] Cloud Inference round-trip time: ${totalTime}`)
+
+      const data = await response.json();
+      if (response.status == 200 && data['0'] != null){
+        res.writeHead(200, { "Content-Type" : "application/json"});
+        res.write(JSON.stringify(data));
+        res.send();
+      }
+      else{
+        return res.status(response.status).send();
+      }
+    }
+    catch(e){
+      console.log("[ERROR] /performMidi forwarding failed. Error: ", e)
+      return res.status(400).send();
+    }
+  }
+});
 
 // For the main (and only) page, serve the web application to the client. 
 app.get('/',(req,res) => {
