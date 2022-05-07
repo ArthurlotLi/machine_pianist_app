@@ -15,7 +15,7 @@ const app = express();
 
 // Location of the 
 const cloudInferenceServerIp = "http://192.168.0.148"
-const cloudInferenceServerPort = 8080
+const cloudInferenceServerPort = 9121
 
 /*
   Web Application logic
@@ -34,13 +34,13 @@ app.use(express.urlencoded({
 // Accept requests to play piano songs. Simple proxy middleware.
 app.post('/performMidi', async (req, res) => {
   console.log("[DEBUG] /performMidi POST request received. Body length: " + JSON.stringify(req.body).length);
-  if(req.body.midi != null) {
+  if(req.body.midi != null && req.body.generate_wav != null) {
     var startTime = performance.now();
     try{
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ "midi": req.body.midi })
+        body: JSON.stringify({ "midi": req.body.midi, "generate_wav" : req.body.generate_wav })
       };
       const response = await fetch(cloudInferenceServerIp + ":" + cloudInferenceServerPort + "/performMidi", requestOptions);
       var endTime = performance.now();

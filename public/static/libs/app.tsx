@@ -14,9 +14,9 @@ const cloudInferenceMachinePianist = "/performMidi"
 
 export class App extends React.Component {
   state = {
-    browserInstrument: 3,
     selectedFile: null,
     performanceMidi: null,
+    performanceWav: null,
     displayedFileName: "Select a MIDI file...",
   };
 
@@ -29,7 +29,16 @@ export class App extends React.Component {
     // TODO.
   }
 
-  onPlayInBrowser() {
+  onPlayInBrowser() {   
+    if(this.state.performanceWav == null){
+      alert("Please submit a MIDI file to be performed first!")
+      return
+    } 
+
+    var snd = new Audio("data:audio/wav;base64," + this.state.performanceWav);
+    snd.play();
+
+    /*
     if(this.state.performanceMidi == null){
       alert("Please submit a MIDI file to be performed first!")
       return
@@ -40,22 +49,30 @@ export class App extends React.Component {
     var Player = new midiPlayerJs.Player(function(event) {
       console.log(event)
       if (event.name == 'Note on') {
+        let note = event.noteNumber
+        let velocity = event.velocity
         //instrument.play(event.noteName, ac.currentTime, {gain:event.velocity/100});
         //document.querySelector('#track-' + event.track + ' code').innerHTML = JSON.stringify(event);
-        console.log(event)
+        //console.log(event)
+      }
+      else if (event.name == 'Controller Change'){
+       let value = event.value 
+       let control = event.noteNumber
       }
     });
 
-    // Load our saved model. 
-    console.log(this.state.performanceMidi);
-    var buf = new ArrayBuffer(this.state.performanceMidi.length*2); // 2 bytes for each char
-    var bufView = new Uint16Array(buf);
-    for (var i=0, strLen=this.state.performanceMidi.length; i < strLen; i++) {
-    bufView[i] = this.state.performanceMidi.charCodeAt(i);
+    // Load our saved midi.
+    let midiString = this.state.performanceMidi;//+ "ÿ/ ";
+    console.log(midiString)
+
+    var buf = new ArrayBuffer(midiString.length*2); // 2 bytes for each char
+    var bufView = new Uint8Array(buf);
+    for (var i=0, strLen=midiString.length; i < strLen; i++) {
+      bufView[i] = midiString.charCodeAt(i);
     }
 
     Player.loadArrayBuffer(buf);
-    Player.play();
+    Player.play();*/
 	}
 
   // When the user has selected a new file. 0
@@ -88,7 +105,7 @@ export class App extends React.Component {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ "midi": encodedString })
+        body: JSON.stringify({ "midi": encodedString, "generate_wav" : "1" })
       };
       console.log("[DEBUG] Submitting request to cloud inference server with body:", requestOptions)
       var startTime = performance.now();
@@ -100,9 +117,12 @@ export class App extends React.Component {
       
       // We have our base64 encoded midi file with performance data! 
       // Let's now decode it and store it.
-      let performanceMidi = Buffer.from(data['0'], "base64").toString();
+      let performanceMidi = Buffer.from(data['0'], "base64").toString('binary');
       this.setState({
         performanceMidi: performanceMidi
+      })
+      this.setState({
+        performanceWav: data['1']
       })
     };
     reader.readAsBinaryString(this.state.selectedFile)
