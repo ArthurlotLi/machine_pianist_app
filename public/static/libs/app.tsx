@@ -9,7 +9,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const cloudInferenceMachinePianist = "/performMidi"
+const cloudInferenceMachinePianist = "/cloudInference/performMidi"
 
 // Initial styles for tool divs. These will change mainly in terms
 // of visibility. 
@@ -23,6 +23,8 @@ const toolInterfaceStyleInitial = {
   display: "block",
   visibility: "visible",
   pointerEvents: "auto",
+  overflow: "hidden",
+  padding: "5px",
 };
 
 const toolProgressInterfaceStyleInitial = {
@@ -30,10 +32,12 @@ const toolProgressInterfaceStyleInitial = {
   color: "var(--secondary-color)",
   width: "max(50%, 450px)",
   margin: "0 auto",
-  height: "110px",
+  height: "90px",
   display: "none",
   visibility: "hidden",
   pointerEvents: "none",
+  overflow: "hidden",
+  padding: "5px",
 };
 
 const toolPlayerInterfaceStyleInitial = {
@@ -41,11 +45,15 @@ const toolPlayerInterfaceStyleInitial = {
   color: "var(--secondary-color)",
   width: "max(50%, 450px)",
   margin: "0 auto",
-  height: "110px",
+  height: "200px",
   display: "none",
   visibility: "hidden",
   pointerEvents: "none",
+  overflow: "hidden",
+  padding: "5px",
 };
+
+const defaultDisplayedFileName = "Select a MIDI file...";
 
 export class App extends React.Component {
 
@@ -55,7 +63,7 @@ export class App extends React.Component {
     selectedFile: null,
     performanceMidi: null,
     performanceWav: null,
-    displayedFileName: "Select a MIDI file...",
+    displayedFileName: defaultDisplayedFileName,
     toolInterfaceStyle : toolInterfaceStyleInitial,
     toolProgressStyle : toolProgressInterfaceStyleInitial,
     toolPlayerStyle : toolPlayerInterfaceStyleInitial,
@@ -67,34 +75,30 @@ export class App extends React.Component {
 
   // Executed only once upon startup.
   componentDidMount(){
-    // TODO.
+    // Disable dragging for background image.
+    let imageElement = document.getElementById('mainBackgroundImg');
+    imageElement.ondragstart = function() { return false; };
+    imageElement.oncontextmenu = function() { return false; };
   }
 
-  onPlayInBrowser() {   
-    if(this.state.performanceWav == null){
-      alert("Please submit a MIDI file to be performed first!")
-      return
-    } 
-
-    if(this.audio == null){
-      this.audio = new Audio("data:audio/wav;base64," + this.state.performanceWav);
-      this.audio.play();
-    }
-    else if (this.audio.paused){
-      this.audio.play();
-    }
-    else {
-      this.audio.pause();
-    }
-	}
-
-  // When the user has selected a new file. 0
-  onFileChange = event => {
-    this.setState({
+  // When the user has selected a new file. 
+  onFileChange = async event => {
+    await this.setState({
       selectedFile: event.target.files[0],
       displayedFileName: event.target.files[0].name
     })
+    await this.onPerformSong()
   };
+
+  // Stop any existing audio
+  async onPerformAnother() {
+    await this.setState({
+      displayedFileName: defaultDisplayedFileName
+    });
+    var player = document.getElementById("audioPlayer") as HTMLAudioElement;
+    player.pause();
+    this.showTool();
+  }
 
   // When the user submits a file. 
   onPerformSong = () => {
@@ -249,7 +253,6 @@ export class App extends React.Component {
                   <div id="toolInterfaceInputFilename">{this.state.displayedFileName}</div>
                   <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
                 </label>
-                <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Perform Song</button>
               </div>
 
               <div id="toolInterfacePreloaded">
@@ -266,7 +269,9 @@ export class App extends React.Component {
         <div id="toolProgress">
           <div id="toolProgressInner">
             <div id="toolProgressInterface" style={this.state.toolProgressStyle}>
-              Performing "{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}"...
+              <div id="toolProgressInterfaceText">
+                <span>Performing <i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}...</i></span>
+              </div>
             </div>
           </div>
         </div>
@@ -274,16 +279,23 @@ export class App extends React.Component {
         <div id="toolPlayer">
           <div id="toolPlayerInner">
             <div id="toolPlayerInterface" style={this.state.toolPlayerStyle}>
-              <div>
-                "{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}"
+              <div id="toolPlayerInterfaceTitle">
+                <span>Now Performing: <i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}</i></span>
+              </div>
+              <div id="toolPlayerInterfaceAudio">
+                <audio id="audioPlayer" controls src={"data:audio/wav;base64," + this.state.performanceWav} 
+                  title={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".wav"}>
+                  Error encountered - please report this! 
+                </audio>
               </div>
               <div id="toolPlayerInterfacePerformance">
-                <button id="toolPlayerInterfaceButtonListen" onClick={this.onPlayInBrowser.bind(this)}>Play in Browser</button>
                 <button id="toolPlayerInterfaceButtonSaveMp3">Save Audio</button>
                 <button id="toolPlayerInterfaceButtonSaveMidi">Save Midi</button>
               </div>
-              <div>
-              <button id="toolPlayerInterfaceReturn" onClick={this.showTool}>Perform Another Song</button>
+              <div id = "toolPlayerInterfaceReturn">
+                <button id="toolPlayerInterfaceReturnButton" onClick={this.onPerformAnother.bind(this)}>
+                  Perform Another Song...
+                </button>
               </div>
             </div>
           </div>

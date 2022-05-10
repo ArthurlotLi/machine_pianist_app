@@ -7,19 +7,29 @@
 const express = require("express");
 const path = require("path");
 const fetch = require("node-fetch");
+//const proxy = require("http-proxy-middleware");
 
 const listeningPort = 8080;
 
 // Create the app
 const app = express();
 
-// Location of the 
-const cloudInferenceServerIp = "http://192.168.0.148"
-const cloudInferenceServerPort = 9121
+// Location of the Cloud Inference Server. 
+const cloudInferenceServerURL = "http://192.168.0.148:9121"
 
 /*
   Web Application logic
 */
+
+// Note... this HAS to come before /static. 
+/*
+app.use('/cloudInference', proxy.createProxyMiddleware({
+  target: cloudInferenceServerURL,
+  changeOrigin: true,
+  pathRewrite: {
+    [`/cloudInference`]: '',
+  },  
+}))*/
 
 // Whenever the request path has "static" inside of it, simply serve 
 // the static directory as you'd expect. 
@@ -31,8 +41,9 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-// Accept requests to play piano songs. Simple proxy middleware.
-app.post('/performMidi', async (req, res) => {
+// Alternative to proxy middleware.
+ 
+app.post('/cloudInference/performMidi', async (req, res) => {
   console.log("[DEBUG] /performMidi POST request received. Body length: " + JSON.stringify(req.body).length);
   if(req.body.midi != null && req.body.generate_wav != null) {
     var startTime = performance.now();
@@ -42,7 +53,7 @@ app.post('/performMidi', async (req, res) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ "midi": req.body.midi, "generate_wav" : req.body.generate_wav })
       };
-      const response = await fetch(cloudInferenceServerIp + ":" + cloudInferenceServerPort + "/performMidi", requestOptions);
+      const response = await fetch(cloudInferenceServerURL + "/performMidi", requestOptions);
       var endTime = performance.now();
       var totalTime = (endTime - startTime)/1000;
       console.log(`[DEBUG] Cloud Inference round-trip time: ${totalTime}`)
@@ -52,6 +63,7 @@ app.post('/performMidi', async (req, res) => {
         res.writeHead(200, { "Content-Type" : "application/json"});
         res.write(JSON.stringify(data));
         res.send();
+        console.log(`[DEBUG] Cloud Inference response forwarded.`)
       }
       else{
         return res.status(response.status).send();

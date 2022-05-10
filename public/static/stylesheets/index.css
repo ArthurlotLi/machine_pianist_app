@@ -40,6 +40,7 @@ body{
   max-height: 100%;
   margin: 0 auto;
   display: flex;
+  overflow: hidden;
 }
 
 #title{
@@ -83,7 +84,12 @@ body{
   margin: 0 auto;
   width: min(100%, var(--max-total-width));
   max-height: 100%;
-  min-width: 800px;
+  min-width: 900px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 
@@ -137,11 +143,6 @@ input[type="file"] {
   background-color: var(--primary-color);
   color: var(--secondary-color);
 }
-#toolInterfaceButtonPerform{
-  flex: 25%;
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-}
 
 /* Tool 2 - Performance progress */
 #toolProgress{
@@ -160,13 +161,23 @@ input[type="file"] {
   pointer-events: none;
 }
 
+#toolProgressInterfaceText{
+  font-size: max(min(1.7vw, 30px), 25px);
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Tool 3 - Playing a midi */
 #toolPlayer{
   position: absolute;
   left: 0%;
   width: 100%;
-  top: max(min(20%, 200px), 100px);
-  height: max(min(15%, 200px), 100px);
+  top: max(min(14%, 200px), 100px);
+  height: max(min(16%, 200px), 100px);
   pointer-events: none;
 }
 
@@ -177,33 +188,61 @@ input[type="file"] {
   pointer-events: none;
 }
 
-#toolPlayerInterfacePerformance{
-  display: flex;
-  height: 25px;
-  padding: 15px;
+#toolPlayerInterfaceTitle{
+  font-size: max(min(1.7vw, 30px), 25px);
+  margin: 0 auto;
+  width: 100%;
+  padding: 5px;
+  height: max(min(1.7vw, 30px), 25px) + 10px;
+  text-align: center;
+  overflow: hidden;
 }
 
-#toolPlayerInterfaceButtonListen{
-  background-color: var(--tertiary-color);
-  color: var(--secondary-color);
-  flex:10.33%;
-  margin-right: 5px;
+#toolPlayerInterfaceAudio{
+  margin: 0 auto;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+#toolPlayerInterfacePerformance{
+  display: flex;
+  height: 30px;
+  padding: 10px;
+}
+
 #toolPlayerInterfaceButtonSaveMp3{
-  background-color: var(--tertiary-color);
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  font-size: max(min(1.0vw, 18px), 15px);
   flex:10.33%;
 }
 #toolPlayerInterfaceButtonSaveMidi{
-  background-color: var(--tertiary-color);
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  font-size: max(min(1.0vw, 18px), 15px);
   flex:10.33%;
   margin-left: 5px;
+}
+#toolPlayerInterfaceReturn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+}
+#toolPlayerInterfaceReturnButton{
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  font-size: max(min(1.0vw, 18px), 15px);
+  width:50%;
+  height: 100%;
 }
 
 #info {
   position: absolute; 
-  top: max(min(40%, 500px), 300px);
+  top: max(min(42%, 500px), 350px);
   left: 0%;
   width: 100%;
   bottom:0;
