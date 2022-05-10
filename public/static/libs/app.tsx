@@ -8,16 +8,57 @@
 
 const React = require('react');
 const ReactDOM = require('react-dom');
-import midiPlayerJs from "midi-player-js";
 
 const cloudInferenceMachinePianist = "/performMidi"
 
+// Initial styles for tool divs. These will change mainly in terms
+// of visibility. 
+
+const toolInterfaceStyleInitial = {
+  backgroundColor: "rgba(0, 0, 0, 0.9)",
+  color: "var(--secondary-color)",
+  width: "max(50%, 450px)",
+  margin: "0 auto",
+  height: "110px",
+  display: "block",
+  visibility: "visible",
+  pointerEvents: "auto",
+};
+
+const toolProgressInterfaceStyleInitial = {
+  backgroundColor: "rgba(0, 0, 0, 0.9)",
+  color: "var(--secondary-color)",
+  width: "max(50%, 450px)",
+  margin: "0 auto",
+  height: "110px",
+  display: "none",
+  visibility: "hidden",
+  pointerEvents: "none",
+};
+
+const toolPlayerInterfaceStyleInitial = {
+  backgroundColor: "rgba(0, 0, 0, 0.9)",
+  color: "var(--secondary-color)",
+  width: "max(50%, 450px)",
+  margin: "0 auto",
+  height: "110px",
+  display: "none",
+  visibility: "hidden",
+  pointerEvents: "none",
+};
+
 export class App extends React.Component {
+
+  audio = null
+
   state = {
     selectedFile: null,
     performanceMidi: null,
     performanceWav: null,
     displayedFileName: "Select a MIDI file...",
+    toolInterfaceStyle : toolInterfaceStyleInitial,
+    toolProgressStyle : toolProgressInterfaceStyleInitial,
+    toolPlayerStyle : toolPlayerInterfaceStyleInitial,
   };
 
   constructor(){
@@ -35,44 +76,16 @@ export class App extends React.Component {
       return
     } 
 
-    var snd = new Audio("data:audio/wav;base64," + this.state.performanceWav);
-    snd.play();
-
-    /*
-    if(this.state.performanceMidi == null){
-      alert("Please submit a MIDI file to be performed first!")
-      return
+    if(this.audio == null){
+      this.audio = new Audio("data:audio/wav;base64," + this.state.performanceWav);
+      this.audio.play();
     }
-
-    // Initialize player and register event handler
-    console.log("[DEBUG] Initializing new midi player js.");
-    var Player = new midiPlayerJs.Player(function(event) {
-      console.log(event)
-      if (event.name == 'Note on') {
-        let note = event.noteNumber
-        let velocity = event.velocity
-        //instrument.play(event.noteName, ac.currentTime, {gain:event.velocity/100});
-        //document.querySelector('#track-' + event.track + ' code').innerHTML = JSON.stringify(event);
-        //console.log(event)
-      }
-      else if (event.name == 'Controller Change'){
-       let value = event.value 
-       let control = event.noteNumber
-      }
-    });
-
-    // Load our saved midi.
-    let midiString = this.state.performanceMidi;//+ "ÿ/ ";
-    console.log(midiString)
-
-    var buf = new ArrayBuffer(midiString.length*2); // 2 bytes for each char
-    var bufView = new Uint8Array(buf);
-    for (var i=0, strLen=midiString.length; i < strLen; i++) {
-      bufView[i] = midiString.charCodeAt(i);
+    else if (this.audio.paused){
+      this.audio.play();
     }
-
-    Player.loadArrayBuffer(buf);
-    Player.play();*/
+    else {
+      this.audio.pause();
+    }
 	}
 
   // When the user has selected a new file. 0
@@ -92,41 +105,122 @@ export class App extends React.Component {
       return
     }
 
+    // If we have submitted a valid file, show the progress bar. 
+    this.showToolProgress();
+
     // Next, load the file string and encode it, before sending it.
-    const reader = new FileReader()
-    reader.onload = async (e) => { 
-      // Load the binary data. 
-      var text = (e.target.result).toString()
+    try{
+      const reader = new FileReader()
+      reader.onload = async (e) => { 
+        // Load the binary data. 
+        var text = (e.target.result).toString()
 
-      // Base64 encode the file string for HTTP transfer
-      let encodedString = Buffer.from(text.toString(), 'binary').toString('base64');
+        // Base64 encode the file string for HTTP transfer
+        let encodedString = Buffer.from(text.toString(), 'binary').toString('base64');
 
-      // Generate the form and send it off! 
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ "midi": encodedString, "generate_wav" : "1" })
+        // Generate the form and send it off! 
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ "midi": encodedString, "generate_wav" : "1" })
+        };
+        console.log("[DEBUG] Submitting request to cloud inference server with body:", requestOptions)
+        var startTime = performance.now();
+        const response = await fetch(cloudInferenceMachinePianist, requestOptions);
+        const data = await response.json();
+        var endTime = performance.now();
+        var totalTime = (endTime - startTime)/1000;
+        console.log(`[DEBUG] Cloud Inference round-trip time: ${totalTime}. Return data:`, data)
+        
+        // We have our base64 encoded midi file with performance data! 
+        // Let's now decode it and store it.
+        let performanceMidi = Buffer.from(data['0'], "base64").toString('binary');
+        this.setState({
+          performanceMidi: performanceMidi
+        })
+        this.setState({
+          performanceWav: data['1']
+        })
+        this.showToolPlayer();
       };
-      console.log("[DEBUG] Submitting request to cloud inference server with body:", requestOptions)
-      var startTime = performance.now();
-      const response = await fetch(cloudInferenceMachinePianist, requestOptions);
-      const data = await response.json();
-      var endTime = performance.now();
-      var totalTime = (endTime - startTime)/1000;
-      console.log(`[DEBUG] Cloud Inference round-trip time: ${totalTime}. Return data:`, data)
-      
-      // We have our base64 encoded midi file with performance data! 
-      // Let's now decode it and store it.
-      let performanceMidi = Buffer.from(data['0'], "base64").toString('binary');
-      this.setState({
-        performanceMidi: performanceMidi
-      })
-      this.setState({
-        performanceWav: data['1']
-      })
-    };
-    reader.readAsBinaryString(this.state.selectedFile)
+      reader.readAsBinaryString(this.state.selectedFile)
+    }
+    catch(e){
+      console.log("[ERROR] Exception occured during performance! Exception:");
+      console.log(e);
+      alert("Sorry, something went wrong during performance! Please try again later.");
+      this.showTool();
+    }
   };
+
+  // Show the 1st tool (submission) and hide all others. 
+  showTool() {
+    var modifiedToolInterfaceStyle = Object.assign({}, this.state.toolInterfaceStyle);
+    var modifiedToolProgressStyle = Object.assign({}, this.state.toolProgressStyle);
+    var modifiedToolPlayerStyle = Object.assign({}, this.state.toolPlayerStyle);
+
+    modifiedToolInterfaceStyle["display"] = "block";
+    modifiedToolInterfaceStyle["visibility"] = "visible";
+    modifiedToolInterfaceStyle["pointerEvents"] = "auto";
+    modifiedToolProgressStyle["display"] = "none";
+    modifiedToolProgressStyle["visibility"] = "hidden";
+    modifiedToolProgressStyle["pointerEvents"] = "none";
+    modifiedToolPlayerStyle["display"] = "none";
+    modifiedToolPlayerStyle["visibility"] = "hidden";
+    modifiedToolPlayerStyle["pointerEvents"] = "none";
+
+    this.setState({
+      toolInterfaceStyle : modifiedToolInterfaceStyle,
+      toolProgressStyle : modifiedToolProgressStyle,
+      toolPlayerStyle : modifiedToolPlayerStyle,
+    });
+  }
+
+  // Show the 2nd tool (progress) and hide all others. 
+  showToolProgress() {
+    var modifiedToolInterfaceStyle = Object.assign({}, this.state.toolInterfaceStyle);
+    var modifiedToolProgressStyle = Object.assign({}, this.state.toolProgressStyle);
+    var modifiedToolPlayerStyle = Object.assign({}, this.state.toolPlayerStyle);
+
+    modifiedToolInterfaceStyle["display"] = "none";
+    modifiedToolInterfaceStyle["visibility"] = "hidden";
+    modifiedToolInterfaceStyle["pointerEvents"] = "none";
+    modifiedToolProgressStyle["display"] = "block";
+    modifiedToolProgressStyle["visibility"] = "visible";
+    modifiedToolProgressStyle["pointerEvents"] = "auto";
+    modifiedToolPlayerStyle["display"] = "none";
+    modifiedToolPlayerStyle["visibility"] = "hidden";
+    modifiedToolPlayerStyle["pointerEvents"] = "none";
+
+    this.setState({
+      toolInterfaceStyle : modifiedToolInterfaceStyle,
+      toolProgressStyle : modifiedToolProgressStyle,
+      toolPlayerStyle : modifiedToolPlayerStyle,
+    });
+  }
+
+  // Show the 2nd tool (progress) and hide all others. 
+  showToolPlayer() {
+    var modifiedToolInterfaceStyle = Object.assign({}, this.state.toolInterfaceStyle);
+    var modifiedToolProgressStyle = Object.assign({}, this.state.toolProgressStyle);
+    var modifiedToolPlayerStyle = Object.assign({}, this.state.toolPlayerStyle);
+
+    modifiedToolInterfaceStyle["display"] = "none";
+    modifiedToolInterfaceStyle["visibility"] = "hidden";
+    modifiedToolInterfaceStyle["pointerEvents"] = "none";
+    modifiedToolProgressStyle["display"] = "none";
+    modifiedToolProgressStyle["visibility"] = "hidden";
+    modifiedToolProgressStyle["pointerEvents"] = "none";
+    modifiedToolPlayerStyle["display"] = "block";
+    modifiedToolPlayerStyle["visibility"] = "visible";
+    modifiedToolPlayerStyle["pointerEvents"] = "auto";
+
+    this.setState({
+      toolInterfaceStyle : modifiedToolInterfaceStyle,
+      toolProgressStyle : modifiedToolProgressStyle,
+      toolPlayerStyle : modifiedToolPlayerStyle,
+    });
+  }
 
   render() {
     return (
@@ -148,7 +242,8 @@ export class App extends React.Component {
 
         <div id="tool">
           <div id="toolInner">
-            <div id="toolInterface">
+            <div id="toolInterface" style={this.state.toolInterfaceStyle}>
+              
               <div id="toolInterfaceMidi">
                 <label class="custom-file-upload">
                   <div id="toolInterfaceInputFilename">{this.state.displayedFileName}</div>
@@ -156,10 +251,39 @@ export class App extends React.Component {
                 </label>
                 <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Perform Song</button>
               </div>
-              <div id="toolInterfacePerformance">
-                <button id="toolInterfaceButtonListen" onClick={this.onPlayInBrowser.bind(this)}>Play in Browser</button>
-                <button id="toolInterfaceButtonSaveMp3">Save Mp3</button>
-                <button id="toolInterfaceButtonSaveMidi">Save Midi</button>
+
+              <div id="toolInterfacePreloaded">
+                <select id="toolInterfacePreloadedSelect">
+                  <option value="Seven Nation Army">Seven Nation Army</option>
+                  <option value="Spider Dance">Spider Dance</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div id="toolProgress">
+          <div id="toolProgressInner">
+            <div id="toolProgressInterface" style={this.state.toolProgressStyle}>
+              Performing "{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}"...
+            </div>
+          </div>
+        </div>
+
+        <div id="toolPlayer">
+          <div id="toolPlayerInner">
+            <div id="toolPlayerInterface" style={this.state.toolPlayerStyle}>
+              <div>
+                "{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}"
+              </div>
+              <div id="toolPlayerInterfacePerformance">
+                <button id="toolPlayerInterfaceButtonListen" onClick={this.onPlayInBrowser.bind(this)}>Play in Browser</button>
+                <button id="toolPlayerInterfaceButtonSaveMp3">Save Audio</button>
+                <button id="toolPlayerInterfaceButtonSaveMidi">Save Midi</button>
+              </div>
+              <div>
+              <button id="toolPlayerInterfaceReturn" onClick={this.showTool}>Perform Another Song</button>
               </div>
             </div>
           </div>

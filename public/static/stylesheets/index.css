@@ -86,27 +86,31 @@ body{
   min-width: 800px;
 }
 
+
+/* Tool 1 - Submitting a midi */
 #tool{
   position: absolute;
   left: 0%;
   width: 100%;
   top: max(min(20%, 200px), 100px);
   height: max(min(15%, 200px), 100px);
+  pointer-events: none;
 }
 
 #toolInner{
   width: min(100%, var(--max-total-width));
   margin: 0 auto;
   height: 100%;
+  pointer-events: none;
 }
-
+/*
 #toolInterface{
   background-color: rgba(0, 0, 0, 0.9);
   color:var(--secondary-color);
   width: max(50%, 450px);
   margin: 0 auto;
   height: 110px;
-}
+}*/
 
 #toolInterfaceMidi{
   display: flex;
@@ -139,24 +143,58 @@ input[type="file"] {
   color: var(--secondary-color);
 }
 
-#toolInterfacePerformance{
+/* Tool 2 - Performance progress */
+#toolProgress{
+  position: absolute;
+  left: 0%;
+  width: 100%;
+  top: max(min(20%, 200px), 100px);
+  height: max(min(15%, 200px), 100px);
+  pointer-events: none;
+}
+
+#toolProgressInner{
+  width: min(100%, var(--max-total-width));
+  margin: 0 auto;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Tool 3 - Playing a midi */
+#toolPlayer{
+  position: absolute;
+  left: 0%;
+  width: 100%;
+  top: max(min(20%, 200px), 100px);
+  height: max(min(15%, 200px), 100px);
+  pointer-events: none;
+}
+
+#toolPlayerInner{
+  width: min(100%, var(--max-total-width));
+  margin: 0 auto;
+  height: 100%;
+  pointer-events: none;
+}
+
+#toolPlayerInterfacePerformance{
   display: flex;
   height: 25px;
   padding: 15px;
 }
 
-#toolInterfaceButtonListen{
+#toolPlayerInterfaceButtonListen{
   background-color: var(--tertiary-color);
   color: var(--secondary-color);
   flex:10.33%;
   margin-right: 5px;
 }
-#toolInterfaceButtonSaveMp3{
+#toolPlayerInterfaceButtonSaveMp3{
   background-color: var(--tertiary-color);
   color: var(--secondary-color);
   flex:10.33%;
 }
-#toolInterfaceButtonSaveMidi{
+#toolPlayerInterfaceButtonSaveMidi{
   background-color: var(--tertiary-color);
   color: var(--secondary-color);
   flex:10.33%;
