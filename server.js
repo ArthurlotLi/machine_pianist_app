@@ -34,6 +34,8 @@ app.use('/cloudInference', proxy.createProxyMiddleware({
 // Whenever the request path has "static" inside of it, simply serve 
 // the static directory as you'd expect. 
 app.use("/static", express.static(path.resolve(__dirname, "public", "static")));
+// Serve all assets. 
+app.use("/assets", express.static(path.join(__dirname, "assets")));
 
 // To support parsing of JSON objects in both body and url. 
 app.use(express.json());
@@ -58,12 +60,15 @@ app.post('/cloudInference/performMidi', async (req, res) => {
       var totalTime = (endTime - startTime)/1000;
       console.log(`[DEBUG] Cloud Inference round-trip time: ${totalTime}`)
 
+      var startTime = performance.now();
       const data = await response.json();
       if (response.status == 200 && data['0'] != null){
         res.writeHead(200, { "Content-Type" : "application/json"});
         res.write(JSON.stringify(data));
         res.send();
-        console.log(`[DEBUG] Cloud Inference response forwarded.`)
+        var endTime = performance.now();
+        var totalTime = (endTime - startTime)/1000;
+        console.log(`[DEBUG] Cloud Inference reponse forwarding time: ${totalTime}`)
       }
       else{
         return res.status(response.status).send();
@@ -83,5 +88,5 @@ app.get('/',(req,res) => {
 
 // Start the server to listen on this port.
 app.listen(listeningPort, () => {
-  console.log("Project KotakeeOS is online at port: " +listeningPort);
+  console.log("Project Machine Pianist is online at port: " +listeningPort);
 });

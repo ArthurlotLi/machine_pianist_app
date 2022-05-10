@@ -5,12 +5,16 @@
 */
 
 :root {
-  --primary-color: rgb(29, 29, 29);
+  --primary-color: rgb(37, 37, 37);
   --secondary-color: rgb(255, 255, 255);
   --tertiary-color: #000000;
   --highlight-color: black;
   --text-color: black;
   --max-total-width: 1280px;
+
+  --button1-color: rgb(6, 104, 101);
+  --button2-color: rgb(143, 41, 10);
+  --button3-color: rgb(197, 0, 108);
 }
 
 html{
@@ -70,14 +74,12 @@ body{
   left:0%;
   top: 0%;
   bottom:0;
-  overflow:hidden;
 }
 
 #mainBackgroundInner{
   width: min(100%, var(--max-total-width));
   max-height: 100%;
   margin: 0 auto;
-  overflow:hidden;
 }
 
 #mainBackgroundImg {
@@ -98,7 +100,7 @@ body{
   position: absolute;
   left: 0%;
   width: 100%;
-  top: max(min(20%, 200px), 100px);
+  top: max(min(18%, 200px), 130px);
   height: max(min(15%, 200px), 100px);
   pointer-events: none;
 }
@@ -122,6 +124,7 @@ body{
   display: flex;
   height: 35px;
   padding: 15px;
+  padding-top: 0px;
   padding-bottom: 0px;
 }
 
@@ -132,16 +135,60 @@ input[type="file"] {
   flex: 65%;
   border: 1px solid #ccc;
   display: inline-block;
+  padding-top: 6px;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+  background-color: rgba(255, 255, 255, 0.9);
+  overflow:hidden;
+  font-size: 16px;
+  margin-right: 5px;
+}
+#toolInterfaceInputFilenameInner{
+  padding-left: 12px;
+}
+#toolInterfaceInput{
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+#toolInterfaceButtonPerform{
+  flex: 25%;
+  background-color: var(--button1-color);
+  color: var(--secondary-color);
+  font-size: 16px;
+}
+
+#toolInterfaceOr{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding:10px;
+  font-size: 16px;
+}
+
+#toolInterfacePreloaded{
+  display: flex;
+  height: 35px;
+  padding: 15px;
+  padding-bottom: 0px;
+}
+#toolInterfacePreloadedSelect{
+  flex: 65%;
+  border: 1px solid #ccc;
+  display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
   color: rgb(0, 0, 0);
   background-color: rgba(255, 255, 255, 0.9);
   overflow:hidden;
+  font-size: 16px;
+  margin-right: 5px;
 }
-
-#toolInterfaceInput{
-  background-color: var(--primary-color);
+#toolInterfaceButtonPerform2{
+  flex: 25%;
+  background-color: var(--button2-color);
   color: var(--secondary-color);
+  font-size: 16px;
 }
 
 /* Tool 2 - Performance progress */
@@ -149,7 +196,7 @@ input[type="file"] {
   position: absolute;
   left: 0%;
   width: 100%;
-  top: max(min(20%, 200px), 100px);
+  top: max(min(20%, 220px), 170px);
   height: max(min(15%, 200px), 100px);
   pointer-events: none;
 }
@@ -162,7 +209,7 @@ input[type="file"] {
 }
 
 #toolProgressInterfaceText{
-  font-size: max(min(1.7vw, 30px), 25px);
+  font-size: 25px;
   width: 100%;
   height: 100%;
   text-align: center;
@@ -176,7 +223,7 @@ input[type="file"] {
   position: absolute;
   left: 0%;
   width: 100%;
-  top: max(min(14%, 200px), 100px);
+  top: max(min(16%, 180px), 120px);
   height: max(min(16%, 200px), 100px);
   pointer-events: none;
 }
@@ -189,13 +236,15 @@ input[type="file"] {
 }
 
 #toolPlayerInterfaceTitle{
-  font-size: max(min(1.7vw, 30px), 25px);
+  font-size: 25px;
   margin: 0 auto;
   width: 100%;
   padding: 5px;
-  height: max(min(1.7vw, 30px), 25px) + 10px;
+  height: 25px + 10px;
   text-align: center;
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 #toolPlayerInterfaceAudio{
@@ -213,16 +262,20 @@ input[type="file"] {
   padding: 10px;
 }
 
-#toolPlayerInterfaceButtonSaveMp3{
-  background-color: var(--secondary-color);
-  color: var(--primary-color);
-  font-size: max(min(1.0vw, 18px), 15px);
+#toolPlayerInterfaceButtonSaveMp3Outer {
   flex:10.33%;
 }
+#toolPlayerInterfaceButtonSaveMp3{
+  background-color: var(--button1-color);
+  color: var(--secondary-color);
+  font-size: 16px;
+  height: 100%;
+  width: 100%;
+}
 #toolPlayerInterfaceButtonSaveMidi{
-  background-color: var(--secondary-color);
-  color: var(--primary-color);
-  font-size: max(min(1.0vw, 18px), 15px);
+  background-color: var(--button2-color);
+  color: var(--secondary-color);
+  font-size: 16px;
   flex:10.33%;
   margin-left: 5px;
 }
@@ -231,18 +284,20 @@ input[type="file"] {
   justify-content: center;
   align-items: center;
   height: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 #toolPlayerInterfaceReturnButton{
   background-color: var(--primary-color);
   color: var(--secondary-color);
-  font-size: max(min(1.0vw, 18px), 15px);
-  width:50%;
+  font-size: 16px;
+  width:100%;
   height: 100%;
 }
 
 #info {
   position: absolute; 
-  top: max(min(42%, 500px), 350px);
+  top: max(min(45%, 500px), 380px);
   left: 0%;
   width: 100%;
   bottom:0;

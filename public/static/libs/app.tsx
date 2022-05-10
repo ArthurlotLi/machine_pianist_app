@@ -19,7 +19,7 @@ const toolInterfaceStyleInitial = {
   color: "var(--secondary-color)",
   width: "max(50%, 450px)",
   margin: "0 auto",
-  height: "110px",
+  height: "140px",
   display: "block",
   visibility: "visible",
   pointerEvents: "auto",
@@ -53,20 +53,80 @@ const toolPlayerInterfaceStyleInitial = {
   padding: "5px",
 };
 
-const defaultDisplayedFileName = "Select a MIDI file...";
+const defaultDisplayedFileName = "Select a .mid or .midi file to perform...";
+const defaultDisplayedSamplePerformance = { "--- Select a sample performance ---": ""}
+
+// Small standard object to pass around to cite sample song locations. 
+class SamplePerformance {
+  songName = null
+  src = null
+  hyperlink = null
+  constructor(songName, src, hyperlink){
+    this.songName = songName;
+    this.src = src;
+    this.hyperlink = hyperlink;
+  }
+};
+
+// Declare all sample songs.
+const sampleSongObjects = [
+  new SamplePerformance("Spider Dance", 
+    "../../../assets/lattice.mp3",
+    "https://musescore.com/user/441326/scores/5543583"),
+  new SamplePerformance("Seven Nation Army", 
+  "../../../assets/seven nation army.mp3",
+    "https://musescore.com/user/27050094/scores/4835229"),
+  new SamplePerformance("Melody of Water (Duet)", 
+    "../../../assets/water.mp3",
+    "https://musescore.com/shadowtenshii/scores/5082965"),
+  new SamplePerformance("My Castle Town", 
+    "../../../assets/castle.mp3",
+    "https://musescore.com/user/34759039/scores/7017953"),
+  new SamplePerformance("Dream On", 
+    "../../../assets/dream on.mp3",
+    "https://musescore.com/user/36070839/scores/6811642"),
+  new SamplePerformance("Take me to Church", 
+    "../../../assets/church.mp3",
+    "https://musescore.com/user/1055536/scores/3974821"),
+  new SamplePerformance("Grant's Etude", 
+    "../../../assets/blue brown.mp3",
+    "https://musescore.com/user/3448751/scores/6091506"),
+  new SamplePerformance("Megalovania", 
+    "../../../assets/megalovania.mp3",
+    "https://musescore.com/user/73972/scores/1352796"),
+  new SamplePerformance("Waltz in A Minor", 
+    "../../../assets/waltz.mp3",
+    "https://musescore.com/user/4609986/scores/1749181"),
+  new SamplePerformance("Prélude No. 14 BWV 883 in F♯ Minor", 
+    "../../../assets/prelude.mp3",
+    "https://musescore.com/classicman/scores/1444781"),
+  new SamplePerformance("Sonate No. 14 Moonlight 3rd Movement", 
+    "../../../assets/sonate.mp3",
+    "https://musescore.com/classicman/scores/33715"),
+  new SamplePerformance("Prélude Opus 28 No. 4 in E Minor", 
+    "../../../assets/opus.mp3",
+    "https://musescore.com/user/19710/scores/65474"),
+  new SamplePerformance("Piano Sonata No. 11 K. 331 3rd Movement", 
+    "../../../assets/rondo.mp3",
+    "https://musescore.com/classicman/scores/49143"),
+];
 
 export class App extends React.Component {
 
-  audio = null
+  audio = null;
+
+  sampleSongs: {};
 
   state = {
     selectedFile: null,
     performanceMidi: null,
     performanceWav: null,
+    citationUrl: null,
     displayedFileName: defaultDisplayedFileName,
     toolInterfaceStyle : toolInterfaceStyleInitial,
     toolProgressStyle : toolProgressInterfaceStyleInitial,
     toolPlayerStyle : toolPlayerInterfaceStyleInitial,
+    sampleSongDropdown: {},
   };
 
   constructor(){
@@ -79,9 +139,34 @@ export class App extends React.Component {
     let imageElement = document.getElementById('mainBackgroundImg');
     imageElement.ondragstart = function() { return false; };
     imageElement.oncontextmenu = function() { return false; };
+
+    // Populate sample songs. Populate dropdown. 
+    let newSampleSongs = {};
+    let newSampleSongsDropdown = defaultDisplayedSamplePerformance;
+    for(var i =0; i < sampleSongObjects.length;i++){
+      let samplePerformance = sampleSongObjects[i];
+      let songName = samplePerformance.songName;
+      newSampleSongs[songName] = samplePerformance; 
+      newSampleSongsDropdown[songName] = songName;
+    };
+    this.setState({
+      sampleSongDropdown : newSampleSongsDropdown
+    });
+    this.sampleSongs = newSampleSongs
   }
 
-  // When the user has selected a new file. 
+  // When the user has selected to load a sample performance. 
+  async onPreloadedSelect(evt){
+    await this.setState({
+      performanceWav: this.sampleSongs[evt.target.value].src,
+      selectedFile: evt.target.value,
+      displayedFileName: evt.target.value,
+      citationUrl: this.sampleSongs[evt.target.value].hyperlink,
+    });
+    this.showToolPlayer();
+  }
+
+  // When the user has selected a new file. Kick off song performance.
   onFileChange = async event => {
     await this.setState({
       selectedFile: event.target.files[0],
@@ -91,9 +176,13 @@ export class App extends React.Component {
   };
 
   // Stop any existing audio
-  async onPerformAnother() {
+  async resetTool() {
     await this.setState({
-      displayedFileName: defaultDisplayedFileName
+      displayedFileName: defaultDisplayedFileName,
+      selectedFile: null,
+      performanceMidi: null,
+      performanceWav: null,
+      citationUrl: null,
     });
     var player = document.getElementById("audioPlayer") as HTMLAudioElement;
     player.pause();
@@ -103,6 +192,10 @@ export class App extends React.Component {
   // When the user submits a file. 
   onPerformSong = () => {
     // First, verify that the file is a MIDI. 
+    if(this.state.selectedFile == null){
+      alert("Please select a file (.midi or .mid) to perform!\n\nAlternatively, choose a saved performance to listen to.");
+      return
+    }
     if(this.state.selectedFile.type != "audio/midi" && this.state.selectedFile.type != "audio/mid"){
       console.log(`[ERROR] Invalid file type ${this.state.selectedFile.type} selected!`)
       alert("Only .mid or .midi files are supported! Please select a valid file to perform.");
@@ -131,6 +224,15 @@ export class App extends React.Component {
         console.log("[DEBUG] Submitting request to cloud inference server with body:", requestOptions)
         var startTime = performance.now();
         const response = await fetch(cloudInferenceMachinePianist, requestOptions);
+
+        if(response.status != 200)
+        {
+          console.log("[ERROR] Exception occured during the performance! Response:");
+          console.log(response);
+          alert("Sorry, something went wrong during the performance!\n\nPlease try another song or try again later.");
+          this.resetTool();
+        }
+
         const data = await response.json();
         var endTime = performance.now();
         var totalTime = (endTime - startTime)/1000;
@@ -143,17 +245,17 @@ export class App extends React.Component {
           performanceMidi: performanceMidi
         })
         this.setState({
-          performanceWav: data['1']
+          performanceWav: "data:audio/mp3;base64," + data['1']
         })
         this.showToolPlayer();
       };
       reader.readAsBinaryString(this.state.selectedFile)
     }
     catch(e){
-      console.log("[ERROR] Exception occured during performance! Exception:");
+      console.log("[ERROR] Exception occured during the performance! Exception:");
       console.log(e);
-      alert("Sorry, something went wrong during performance! Please try again later.");
-      this.showTool();
+      alert("Sorry, something went wrong during the performance!\n\nPlease try another song or try again later.");
+      this.resetTool();
     }
   };
 
@@ -247,19 +349,28 @@ export class App extends React.Component {
         <div id="tool">
           <div id="toolInner">
             <div id="toolInterface" style={this.state.toolInterfaceStyle}>
-              
-              <div id="toolInterfaceMidi">
-                <label class="custom-file-upload">
-                  <div id="toolInterfaceInputFilename">{this.state.displayedFileName}</div>
-                  <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
-                </label>
+
+            <div id="toolInterfacePreloaded">
+                <select id="toolInterfacePreloadedSelect" default="" onChange={evt => this.onPreloadedSelect(evt)}>
+                  {Object.keys(this.state.sampleSongDropdown).map((x,y) => <option key={y}>{x}</option>)}
+                </select>
+                <button id="toolInterfaceButtonPerform2" onClick={this.onPerformSong}>Play Song</button>
               </div>
 
-              <div id="toolInterfacePreloaded">
-                <select id="toolInterfacePreloadedSelect">
-                  <option value="Seven Nation Army">Seven Nation Army</option>
-                  <option value="Spider Dance">Spider Dance</option>
-                </select>
+              <div id="toolInterfaceOr">
+                Or
+              </div>
+
+              <div id="toolInterfaceMidi">
+                <label class="custom-file-upload">
+                  <div id="toolInterfaceInputFilename">
+                    <span id="toolInterfaceInputFilenameInner">
+                      {this.state.displayedFileName}
+                    </span>
+                  </div>
+                  <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
+                </label>
+                <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Upload Midi</button>
               </div>
 
             </div>
@@ -280,20 +391,24 @@ export class App extends React.Component {
           <div id="toolPlayerInner">
             <div id="toolPlayerInterface" style={this.state.toolPlayerStyle}>
               <div id="toolPlayerInterfaceTitle">
-                <span>Now Performing: <i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}</i></span>
+                <span>Now Performing: <a href={this.state.citationUrl} target="_blank"><i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}</i></a>
+                </span>
               </div>
               <div id="toolPlayerInterfaceAudio">
-                <audio id="audioPlayer" controls src={"data:audio/wav;base64," + this.state.performanceWav} 
-                  title={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".wav"}>
+                <audio id="audioPlayer" controls src={this.state.performanceWav} 
+                  title={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
                   Error encountered - please report this! 
                 </audio>
               </div>
               <div id="toolPlayerInterfacePerformance">
-                <button id="toolPlayerInterfaceButtonSaveMp3">Save Audio</button>
-                <button id="toolPlayerInterfaceButtonSaveMidi">Save Midi</button>
+                <a id="toolPlayerInterfaceButtonSaveMp3Outer" href={this.state.performanceWav}
+                  download={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
+                  <button id="toolPlayerInterfaceButtonSaveMp3" >Download Mp3</button>
+                </a>
+                <button id="toolPlayerInterfaceButtonSaveMidi">Download Midi</button>
               </div>
               <div id = "toolPlayerInterfaceReturn">
-                <button id="toolPlayerInterfaceReturnButton" onClick={this.onPerformAnother.bind(this)}>
+                <button id="toolPlayerInterfaceReturnButton" onClick={this.resetTool.bind(this)}>
                   Perform Another Song...
                 </button>
               </div>
