@@ -54,7 +54,7 @@ const toolPlayerInterfaceStyleInitial = {
 };
 
 const defaultDisplayedFileName = "Select a .mid or .midi file to perform...";
-const defaultDisplayedSamplePerformance = { "--- Select a sample performance ---": ""}
+const defaultDisplayedSamplePerformance = { "-- Select a sample performance --": ""}
 
 // Small standard object to pass around to cite sample song locations. 
 class SamplePerformance {
@@ -97,16 +97,16 @@ const sampleSongObjects = [
   new SamplePerformance("Waltz in A Minor", 
     "../../../assets/waltz.mp3",
     "https://musescore.com/user/4609986/scores/1749181"),
-  new SamplePerformance("Prélude No. 14 BWV 883 in F♯ Minor", 
+  new SamplePerformance("Prélude No. 14 BWV 883", 
     "../../../assets/prelude.mp3",
     "https://musescore.com/classicman/scores/1444781"),
-  new SamplePerformance("Sonate No. 14 Moonlight 3rd Movement", 
+  new SamplePerformance("Sonate No. 14 Moonlight", 
     "../../../assets/sonate.mp3",
     "https://musescore.com/classicman/scores/33715"),
-  new SamplePerformance("Prélude Opus 28 No. 4 in E Minor", 
+  new SamplePerformance("Prélude Opus 28 No. 4", 
     "../../../assets/opus.mp3",
     "https://musescore.com/user/19710/scores/65474"),
-  new SamplePerformance("Piano Sonata No. 11 K. 331 3rd Movement", 
+  new SamplePerformance("Sonata No. 11 3rd Movement", 
     "../../../assets/rondo.mp3",
     "https://musescore.com/classicman/scores/49143"),
 ];
@@ -164,6 +164,8 @@ export class App extends React.Component {
       citationUrl: this.sampleSongs[evt.target.value].hyperlink,
     });
     this.showToolPlayer();
+    var player = document.getElementById("audioPlayer") as HTMLAudioElement;
+    player.play();
   }
 
   // When the user has selected a new file. Kick off song performance.
@@ -187,6 +189,9 @@ export class App extends React.Component {
     var player = document.getElementById("audioPlayer") as HTMLAudioElement;
     player.pause();
     this.showTool();
+
+    var preloadSelect = document.getElementById("toolInterfacePreloadedSelect") as HTMLSelectElement
+    preloadSelect.selectedIndex = 0
   }
 
   // When the user submits a file. 
@@ -358,7 +363,7 @@ export class App extends React.Component {
               </div>
 
               <div id="toolInterfaceOr">
-                Or
+                <hr></hr>
               </div>
 
               <div id="toolInterfaceMidi">
@@ -419,9 +424,9 @@ export class App extends React.Component {
         <div id="info">
           <div id="infoInner">
             <div id="charts">
-              <img id="chart1Img" class="chartImg" src={require("../../../assets/chart1.png").default}/>
+              <img class="chartImg" src={require("../../../assets/chart1.png").default}/>
               <img id="chart2Img" class="chartImg" src={require("../../../assets/chart2.png").default}/>
-              <img id="chart2Img" class="chartImg" src={require("../../../assets/chart3.png").default}/>
+              <img id="chart3Img" class="chartImg" src={require("../../../assets/chart3.png").default}/>
             </div>
             <div id="infotext">
               <h2>What makes a piano performance?</h2>

@@ -158,12 +158,13 @@ input[type="file"] {
 }
 
 #toolInterfaceOr{
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding:10px;
   font-size: 16px;
+  max-width: 100%;
+  margin-left: 5px;
+  margin-right: 7px;
+  color: var(--primary-color);
+  border: none;
 }
 
 #toolInterfacePreloaded{
@@ -321,6 +322,10 @@ input[type="file"] {
   padding: 5px;
   width: min(25.33%, 500px);
   display: block;
+  -webkit-backface-visibility: hidden; 
+  -ms-transform: translateZ(0); /* IE 9 */
+  -webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
+  transform: translateZ(0);
 }
 
 #infotext{
