@@ -157,6 +157,11 @@ export class App extends React.Component {
 
   // When the user has selected to load a sample performance. 
   async onPreloadedSelect(evt){
+    if(evt.target.value == ""){
+      alert("Please select a sample performance to play!");
+      return
+    }
+
     await this.setState({
       performanceWav: this.sampleSongs[evt.target.value].src,
       selectedFile: evt.target.value,
@@ -176,6 +181,50 @@ export class App extends React.Component {
     })
     await this.onPerformSong()
   };
+
+  // When the user wishes to save the midi of this current performance. 
+  async onSaveMidi() {
+    if(this.state.citationUrl != null) {
+      // To be safe, let's not allow users to download MIDIs of our
+      // sample performances from this website. 
+      let a= document.createElement('a');
+      a.target= '_blank';
+      a.href= this.state.citationUrl;
+      a.click();
+      a.remove();
+    }
+    else{
+      if(this.state.performanceMidi == null){
+        alert("Please select a file (.midi or .mid) to perform!");
+        return
+      }
+
+      var byteCharacters = atob(this.state.performanceMidi);
+      var byteNumbers = new Array(byteCharacters.length);
+      for (var i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      var byteArray = new Uint8Array(byteNumbers);
+      
+      // Otherwise, allow users to save the midi file. 
+      var blob = new Blob([byteArray], {type: "application/octet-stream"});
+      var fileName = this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mid";
+      
+      var url = window.URL.createObjectURL(blob);
+
+      var anchorElem = document.createElement("a");
+      anchorElem.href = url;
+      anchorElem.download = fileName;
+      anchorElem.click();
+      anchorElem.remove();
+
+      // On Edge, revokeObjectURL should be called only after
+      // a.click() has completed, atleast on EdgeHTML 15.15048
+      setTimeout(function() {
+        window.URL.revokeObjectURL(url);
+      }, 1000);
+    }
+  }
 
   // Stop any existing audio
   async resetTool() {
@@ -245,9 +294,9 @@ export class App extends React.Component {
         
         // We have our base64 encoded midi file with performance data! 
         // Let's now decode it and store it.
-        let performanceMidi = Buffer.from(data['0'], "base64").toString('binary');
+        //let performanceMidi = Buffer.from(data['0'], "base64").toString('binary');
         this.setState({
-          performanceMidi: performanceMidi
+          performanceMidi: data['0']
         })
         this.setState({
           performanceWav: "data:audio/mp3;base64," + data['1']
@@ -359,7 +408,7 @@ export class App extends React.Component {
                 <select id="toolInterfacePreloadedSelect" default="" onChange={evt => this.onPreloadedSelect(evt)}>
                   {Object.keys(this.state.sampleSongDropdown).map((x,y) => <option key={y}>{x}</option>)}
                 </select>
-                <button id="toolInterfaceButtonPerform2" onClick={this.onPerformSong}>Play Song</button>
+                <button id="toolInterfaceButtonPerform2" onClick={this.onPreloadedSelect}>Play Song</button>
               </div>
 
               <div id="toolInterfaceOr">
@@ -410,7 +459,9 @@ export class App extends React.Component {
                   download={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
                   <button id="toolPlayerInterfaceButtonSaveMp3" >Download Mp3</button>
                 </a>
-                <button id="toolPlayerInterfaceButtonSaveMidi">Download Midi</button>
+                <button id="toolPlayerInterfaceButtonSaveMidi" onClick={this.onSaveMidi.bind(this)}>
+                  {this.state.citationUrl == null ? "Download Midi" : "Visit Source" }
+                </button>
               </div>
               <div id = "toolPlayerInterfaceReturn">
                 <button id="toolPlayerInterfaceReturnButton" onClick={this.resetTool.bind(this)}>
