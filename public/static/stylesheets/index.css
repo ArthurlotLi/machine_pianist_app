@@ -48,24 +48,41 @@ body{
 }
 
 #title{
-  flex: 75%;
+  flex: 70%;
   font-size: max(min(3.3vw, 45px), 35px);
   left: 0%;
   padding-left: min(15px, 0.8%);
+  padding-top: 3px;
   display:block;
   color:var(--secondary-color);
 }
 
 #about{
-  flex: 0%;
-  right: 0%;
+  flex: 25%;
   padding-right: 10px;
-  padding-top: 10px;
-  display:block;
+  padding-top: 0px;
+  bottom: 0px;
+  height: 100%;
+  display:flex;
+  text-align: right;
+  justify-content: right;
+  align-items: right;
 }
 
 #aboutButton {
-  right:0%;
+  margin-top: 5px;
+  flex: 50%;
+  right:0;
+  bottom: 0;
+  width: 100%;
+  max-width: 200px;
+  height: 100%;
+  background-color: var(--button2-color);
+  color: var(--secondary-color);
+  font-size: 16px;
+  margin-top: max(min(1.0vw, 15px), 10px);
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 #mainBackground {
@@ -334,4 +351,68 @@ input[type="file"] {
   margin-right: min(5%, 20px);
   padding-bottom: 20px;
   height: fit-content;
+}
+
+#aboutInfo{
+  position: absolute; 
+  top: max(min(45%, 500px), 380px);
+  left: 0%;
+  width: 100%;
+  bottom:0;
+}
+
+#aboutInfoInner{
+  width: min(100%, var(--max-total-width));
+  margin: 0 auto;
+  background-color: var(--secondary-color);
+  bottom: 0;
+  height: fit-content;
+  min-height: 100%;
+}
+
+#aboutInfoText{
+  margin-top: 0;
+  margin-left: min(5%, 20px);
+  margin-right: min(5%, 20px);
+  padding-bottom: 20px;
+  height: fit-content;
+}
+
+/* Contact div */
+#aboutContact{
+  position: absolute;
+  left: 0%;
+  width: 100%;
+  top: max(min(16%, 180px), 120px);
+  height: max(min(16%, 200px), 100px);
+  pointer-events: none;
+}
+
+#aboutContactInner{
+  width: min(100%, var(--max-total-width));
+  margin: 0 auto;
+  height: 100%;
+  pointer-events: none;
+}
+
+#aboutContactInterface{
+  background-color: rgba(0, 0, 0, 0.9);
+  color: var(--secondary-color);
+  width: max(50%, 450px);
+  margin: 0 auto;
+  height: 200px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+#aboutContactInterfaceTitle {
+  font-size: 25px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 5px;
+  height: 25px + 10px;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

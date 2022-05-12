@@ -53,6 +53,17 @@ const toolPlayerInterfaceStyleInitial = {
   padding: "5px",
 };
 
+const mainPlayerStyleInitial = {
+  display: "block",
+  visibility: "visible",
+  pointerEvents: "auto",
+}
+const aboutStyleInitial = {
+  display: "none",
+  visibility: "hidden",
+  pointerEvents: "none",
+}
+
 const defaultDisplayedFileName = "Select a .mid or .midi file to perform...";
 const defaultDisplayedSamplePerformance = { "-- Select a sample performance --": ""}
 
@@ -94,6 +105,9 @@ const sampleSongObjects = [
   new SamplePerformance("Megalovania", 
     "../../../assets/megalovania.mp3",
     "https://musescore.com/user/73972/scores/1352796"),
+  new SamplePerformance("Rush E (Duet)", 
+    "../../../assets/rush.mp3",
+    "https://musescore.com/user/38680685/scores/7024059"),
   new SamplePerformance("Waltz in A Minor", 
     "../../../assets/waltz.mp3",
     "https://musescore.com/user/4609986/scores/1749181"),
@@ -122,10 +136,13 @@ export class App extends React.Component {
     performanceMidi: null,
     performanceWav: null,
     citationUrl: null,
+    showingAbout: false,
     displayedFileName: defaultDisplayedFileName,
     toolInterfaceStyle : toolInterfaceStyleInitial,
     toolProgressStyle : toolProgressInterfaceStyleInitial,
     toolPlayerStyle : toolPlayerInterfaceStyleInitial,
+    mainPlayerStyle : mainPlayerStyleInitial,
+    aboutStyle: aboutStyleInitial,
     sampleSongDropdown: {},
   };
 
@@ -302,6 +319,8 @@ export class App extends React.Component {
           performanceWav: "data:audio/mp3;base64," + data['1']
         })
         this.showToolPlayer();
+        var player = document.getElementById("audioPlayer") as HTMLAudioElement;
+        player.play();
       };
       reader.readAsBinaryString(this.state.selectedFile)
     }
@@ -382,6 +401,39 @@ export class App extends React.Component {
     });
   }
 
+  toggleAbout() {
+    var modifiedMainPlayer = Object.assign({}, this.state.mainPlayerStyle);
+    var modifiedAbout = Object.assign({}, this.state.aboutStyle);
+
+    if(this.state.showingAbout){
+      modifiedMainPlayer["display"] = "block";
+      modifiedMainPlayer["visibility"] = "visible";
+      modifiedMainPlayer["pointerEvents"] = "auto";
+      modifiedAbout["display"] = "none";
+      modifiedAbout["visibility"] = "hidden";
+      modifiedAbout["pointerEvents"] = "none";
+
+      this.setState({
+        mainPlayerStyle : modifiedMainPlayer,
+        aboutStyle : modifiedAbout,
+        showingAbout: false,
+      });
+    }
+    else {
+      modifiedAbout["display"] = "block";
+      modifiedAbout["visibility"] = "visible";
+      modifiedAbout["pointerEvents"] = "auto";
+      modifiedMainPlayer["display"] = "none";
+      modifiedMainPlayer["visibility"] = "hidden";
+      modifiedMainPlayer["pointerEvents"] = "none";
+
+      this.setState({
+        mainPlayerStyle : modifiedMainPlayer,
+        aboutStyle : modifiedAbout,
+        showingAbout: true,
+      });
+    }
+  }
   render() {
     return (
       <div>
@@ -395,101 +447,173 @@ export class App extends React.Component {
           <div id="headerInner">
             <div id="title">The Machine Pianist</div>
             <div id="about">
-              <button id="aboutButton">About</button>
+              <button id="aboutButton" onClick={this.toggleAbout.bind(this)}>{this.state.showingAbout ? "Main Page" : "About"}</button>
             </div>
           </div>
         </div>
 
-        <div id="tool">
-          <div id="toolInner">
-            <div id="toolInterface" style={this.state.toolInterfaceStyle}>
+        <div id="mainPlayer" style={this.state.mainPlayerStyle}>
 
-            <div id="toolInterfacePreloaded">
-                <select id="toolInterfacePreloadedSelect" default="" onChange={evt => this.onPreloadedSelect(evt)}>
-                  {Object.keys(this.state.sampleSongDropdown).map((x,y) => <option key={y}>{x}</option>)}
-                </select>
-                <button id="toolInterfaceButtonPerform2" onClick={this.onPreloadedSelect}>Play Song</button>
+          <div id="tool">
+            <div id="toolInner">
+              <div id="toolInterface" style={this.state.toolInterfaceStyle}>
+
+              <div id="toolInterfacePreloaded">
+                  <select id="toolInterfacePreloadedSelect" default="" onChange={evt => this.onPreloadedSelect(evt)}>
+                    {Object.keys(this.state.sampleSongDropdown).map((x,y) => <option key={y}>{x}</option>)}
+                  </select>
+                  <button id="toolInterfaceButtonPerform2" onClick={this.onPreloadedSelect}>Play Song</button>
+                </div>
+
+                <div id="toolInterfaceOr">
+                  <hr></hr>
+                </div>
+
+                <div id="toolInterfaceMidi">
+                  <label class="custom-file-upload">
+                    <div id="toolInterfaceInputFilename">
+                      <span id="toolInterfaceInputFilenameInner">
+                        {this.state.displayedFileName}
+                      </span>
+                    </div>
+                    <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
+                  </label>
+                  <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Upload Midi</button>
+                </div>
+
               </div>
+            </div>
+          </div>
 
-              <div id="toolInterfaceOr">
-                <hr></hr>
+          <div id="toolProgress">
+            <div id="toolProgressInner">
+              <div id="toolProgressInterface" style={this.state.toolProgressStyle}>
+                <div id="toolProgressInterfaceText">
+                  <span>Performing <i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}...</i></span>
+                </div>
               </div>
+            </div>
+          </div>
 
-              <div id="toolInterfaceMidi">
-                <label class="custom-file-upload">
-                  <div id="toolInterfaceInputFilename">
-                    <span id="toolInterfaceInputFilenameInner">
-                      {this.state.displayedFileName}
-                    </span>
-                  </div>
-                  <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
-                </label>
-                <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Upload Midi</button>
+          <div id="toolPlayer">
+            <div id="toolPlayerInner">
+              <div id="toolPlayerInterface" style={this.state.toolPlayerStyle}>
+                <div id="toolPlayerInterfaceTitle">
+                  <span>Now Performing: <a href={this.state.citationUrl} target="_blank"><i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}</i></a>
+                  </span>
+                </div>
+                <div id="toolPlayerInterfaceAudio">
+                  <audio id="audioPlayer" controls src={this.state.performanceWav} 
+                    title={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
+                    Error encountered - please report this! 
+                  </audio>
+                </div>
+                <div id="toolPlayerInterfacePerformance">
+                  <a id="toolPlayerInterfaceButtonSaveMp3Outer" href={this.state.performanceWav}
+                    download={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
+                    <button id="toolPlayerInterfaceButtonSaveMp3" >Download Mp3</button>
+                  </a>
+                  <button id="toolPlayerInterfaceButtonSaveMidi" onClick={this.onSaveMidi.bind(this)}>
+                    {this.state.citationUrl == null ? "Download Midi" : "Visit Source" }
+                  </button>
+                </div>
+                <div id = "toolPlayerInterfaceReturn">
+                  <button id="toolPlayerInterfaceReturnButton" onClick={this.resetTool.bind(this)}>
+                    Perform Another Song...
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="info">
+            <div id="infoInner">
+              <div id="charts">
+                <img class="chartImg" src={require("../../../assets/chart1.png").default}/>
+                <img id="chart2Img" class="chartImg" src={require("../../../assets/chart2.png").default}/>
+                <img id="chart3Img" class="chartImg" src={require("../../../assets/chart3.png").default}/>
+              </div>
+              <div id="infotext">
+                <h2>What makes a piano performance?</h2>
+
+                <div>How does a human pianist play sheet music of a song that they've never heard before?
+                </div>
+                <br/>
+
+                <div>This AI-powered tool was created under the conjecture that machine learning can encapsulate human tendencies in performing piano songs. 
+                  The final model, trained for weeks with the performances of expert musicians, is able to synthesize some of the key "humanizing" components of a live performance.
+                  These aspects include:</div>
+
+                <br/>
+                <div>1. Variable velocity of notes when pressed</div>
+                <div>2. Choice of sustain pedal positions throughout a piece</div>
+                <br/>
+
+                <div>
+                  Piano playing software in online websites, installed applications, and shipped pianos simply follow instructions to the letter, without making such subjective choices.
+                  As such, these performances may sound robotic and unnatural at times, without the flowing nuance of a trained musician. 
+                  The task for this project was thus: given an arbitrary piano piece, predict key velocities and pedal positions to produce a more human-sounding performance.
+                </div>
+
+                <br/>
+
+                <div>
+                  The predicted velocities and sustain pedal positions of this model are shown in plot diagrams on this page. 
+                </div>
+
+                <h2>The Machine Pianist website</h2>
+
+                <div>This website provides the trained Machine Pianist model for public use. 
+                  Any .midi or .mid files may be submitted to be "performed" by the model, with the results downloadable in both Mp3 and Midi formats. 
+                </div>
+
+                <br/>
+
+                <div>
+                  Please feel free to experiment, and see how the Machine Pianist stylizes your own arrangements! 
+                </div>
+
+                <br/>
+
+                <br/>
+
+                <div id="charts">
+                  <img class="chartImg" src={require("../../../assets/chart4.png").default}/>
+                  <img id="chart2Img" class="chartImg" src={require("../../../assets/chart5.png").default}/>
+                  <img id="chart3Img" class="chartImg" src={require("../../../assets/chart6.png").default}/>
+                </div>
               </div>
 
             </div>
           </div>
         </div>
 
-        <div id="toolProgress">
-          <div id="toolProgressInner">
-            <div id="toolProgressInterface" style={this.state.toolProgressStyle}>
-              <div id="toolProgressInterfaceText">
-                <span>Performing <i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}...</i></span>
+        <div id="aboutPage" style={this.state.aboutStyle}>
+
+          <div id="aboutContact">
+            <div id="aboutContactInner">
+              <div id="aboutContactInterface">
+                <div id="aboutContactInterfaceTitle">
+                  <span>Arthurlot Li</span>
+                </div>
+
+                <div>
+                  Hello, this is my contact information. 
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div id="toolPlayer">
-          <div id="toolPlayerInner">
-            <div id="toolPlayerInterface" style={this.state.toolPlayerStyle}>
-              <div id="toolPlayerInterfaceTitle">
-                <span>Now Performing: <a href={this.state.citationUrl} target="_blank"><i>{this.state.displayedFileName.replace(".mid", "").replace(".midi", "").replace("_", " ")}</i></a>
-                </span>
+
+          <div id="aboutInfo">
+            <div id="aboutInfoInner">
+
+              <div id="aboutInfoText">
+                <div>
+                  Here are all my citations. 
+                </div>
               </div>
-              <div id="toolPlayerInterfaceAudio">
-                <audio id="audioPlayer" controls src={this.state.performanceWav} 
-                  title={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
-                  Error encountered - please report this! 
-                </audio>
-              </div>
-              <div id="toolPlayerInterfacePerformance">
-                <a id="toolPlayerInterfaceButtonSaveMp3Outer" href={this.state.performanceWav}
-                  download={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
-                  <button id="toolPlayerInterfaceButtonSaveMp3" >Download Mp3</button>
-                </a>
-                <button id="toolPlayerInterfaceButtonSaveMidi" onClick={this.onSaveMidi.bind(this)}>
-                  {this.state.citationUrl == null ? "Download Midi" : "Visit Source" }
-                </button>
-              </div>
-              <div id = "toolPlayerInterfaceReturn">
-                <button id="toolPlayerInterfaceReturnButton" onClick={this.resetTool.bind(this)}>
-                  Perform Another Song...
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div id="info">
-          <div id="infoInner">
-            <div id="charts">
-              <img class="chartImg" src={require("../../../assets/chart1.png").default}/>
-              <img id="chart2Img" class="chartImg" src={require("../../../assets/chart2.png").default}/>
-              <img id="chart3Img" class="chartImg" src={require("../../../assets/chart3.png").default}/>
-            </div>
-            <div id="infotext">
-              <h2>What makes a piano performance?</h2>
-
-              <div>This AI-powered tool was created under the conjecture that the key "humanizing" components lacking in widely available online MIDI files are:</div>
-
-              <br/>
-              <div>1. Variable velocity of notes when pressed.</div>
-              <div>2. Subjective choice of pedal positions throughout a piece.</div>
-              <br/>
-
-              <div>That task assigned was thus, given an input MIDI file lacking such details, augment the file with key velocities and pedal positions to produce a more human-sounding performance for any arbitrary piano piece. </div>
             </div>
           </div>
         </div>

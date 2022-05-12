@@ -38,7 +38,7 @@ app.use("/static", express.static(path.resolve(__dirname, "public", "static")));
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
 // To support parsing of JSON objects in both body and url. 
-app.use(express.json());
+app.use(express.json({limit: '50mb', extended: true}));
 app.use(express.urlencoded({
   extended: true
 }));
