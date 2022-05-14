@@ -364,6 +364,7 @@ input[type="file"] {
 #aboutInfoInner{
   width: min(100%, var(--max-total-width));
   margin: 0 auto;
+  padding-top: 1px;
   background-color: var(--secondary-color);
   bottom: 0;
   height: fit-content;
@@ -385,14 +386,14 @@ input[type="file"] {
   width: 100%;
   top: max(min(16%, 180px), 120px);
   height: max(min(16%, 200px), 100px);
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 #aboutContactInner{
   width: min(100%, var(--max-total-width));
   margin: 0 auto;
   height: 100%;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 #aboutContactInterface{
@@ -403,6 +404,28 @@ input[type="file"] {
   height: 200px;
   overflow: hidden;
   padding: 5px;
+  display: flex;
+}
+
+#aboutContactInterfacePhoto{
+  flex: 45%;
+  overflow: hidden;
+  padding: 5px;
+}
+
+#aboutContactInterfaceImg{
+  height: 100%;
+  width: auto;
+  -webkit-backface-visibility: hidden; 
+  -ms-transform: translateZ(0); /* IE 9 */
+  -webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
+  transform: translateZ(0);
+}
+
+#aboutContactInterfaceInfo{
+  padding-left: 5px;
+  flex: 55%;
+  overflow: hidden;
 }
 
 #aboutContactInterfaceTitle {
@@ -415,4 +438,18 @@ input[type="file"] {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+#aboutContactInterfaceText{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#aboutContactInterfaceSubtitle{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }

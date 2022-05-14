@@ -93,6 +93,21 @@ const sampleSongObjects = [
   new SamplePerformance("My Castle Town", 
     "../../../assets/castle.mp3",
     "https://musescore.com/user/34759039/scores/7017953"),
+  new SamplePerformance("Emperor's New Clothes", 
+    "../../../assets/emperor.mp3",
+    "https://musescore.com/user/32136986/scores/6536649"),
+  new SamplePerformance("No Time to Die", 
+    "../../../assets/no time to die.mp3",
+    "https://musescore.com/user/22869211/scores/6081588"),
+  new SamplePerformance("Hotel California", 
+    "../../../assets/hotel california.mp3",
+    "https://musescore.com/user/1842796/scores/7696946"),
+  new SamplePerformance("The Night King", 
+    "../../../assets/night king.mp3",
+    "https://musescore.com/user/11989916/scores/5549583"),
+  new SamplePerformance("Radioactive", 
+    "../../../assets/radioactive.mp3",
+    "https://musescore.com/user/12677026/scores/3924896"),
   new SamplePerformance("Dream On", 
     "../../../assets/dream on.mp3",
     "https://musescore.com/user/36070839/scores/6811642"),
@@ -102,9 +117,12 @@ const sampleSongObjects = [
   new SamplePerformance("Grant's Etude", 
     "../../../assets/blue brown.mp3",
     "https://musescore.com/user/3448751/scores/6091506"),
+  new SamplePerformance("Daredevil (Duet)", 
+    "../../../assets/daredevil.mp3",
+    "https://musescore.com/user/121033/scores/7292981"),
   new SamplePerformance("Megalovania", 
     "../../../assets/megalovania.mp3",
-    "https://musescore.com/user/73972/scores/1352796"),
+    "https://musescore.com/user/2315121/scores/1673431"),
   new SamplePerformance("Rush E (Duet)", 
     "../../../assets/rush.mp3",
     "https://musescore.com/user/38680685/scores/7024059"),
@@ -157,7 +175,10 @@ export class App extends React.Component {
     imageElement.ondragstart = function() { return false; };
     imageElement.oncontextmenu = function() { return false; };
 
-    // Populate sample songs. Populate dropdown. 
+    // Populate sample songs. Populate dropdown. Also populate the
+    // about page list. 
+    let aboutInfoTextSongs = document.getElementById('aboutInfoTextSongs');
+    let aboutInfoDivs = [];
     let newSampleSongs = {};
     let newSampleSongsDropdown = defaultDisplayedSamplePerformance;
     for(var i =0; i < sampleSongObjects.length;i++){
@@ -165,11 +186,32 @@ export class App extends React.Component {
       let songName = samplePerformance.songName;
       newSampleSongs[songName] = samplePerformance; 
       newSampleSongsDropdown[songName] = songName;
+
+      let newInfoDiv = document.createElement("div");
+      let newInfoBold = document.createElement("b");
+      let newInfoItalics = document.createElement("i");
+      newInfoItalics.innerText = songName
+      let newInfoSpan = document.createElement("span");
+      newInfoSpan.innerText = " - "
+      let newInfoLink = document.createElement("a");
+      newInfoLink.href = samplePerformance.hyperlink;
+      newInfoLink.innerText = samplePerformance.hyperlink;
+      newInfoLink.target = "_blank";
+      newInfoBold.appendChild(newInfoItalics);
+      newInfoDiv.appendChild(newInfoBold)
+      newInfoDiv.appendChild(newInfoSpan)
+      newInfoDiv.appendChild(newInfoLink)
+      aboutInfoDivs.push(newInfoDiv);
     };
     this.setState({
       sampleSongDropdown : newSampleSongsDropdown
     });
     this.sampleSongs = newSampleSongs
+
+    for(var i=0; i< aboutInfoDivs.length; i ++){
+      let div = aboutInfoDivs[i];
+      aboutInfoTextSongs.appendChild(div);
+    }
   }
 
   // When the user has selected to load a sample performance. 
@@ -536,7 +578,7 @@ export class App extends React.Component {
               <div id="infotext">
                 <h2>What makes a piano performance?</h2>
 
-                <div>How does a human pianist play sheet music of a song that they've never heard before?
+                <div>How does a human play sheet music of a song that they've never heard before?
                 </div>
                 <br/>
 
@@ -593,12 +635,25 @@ export class App extends React.Component {
           <div id="aboutContact">
             <div id="aboutContactInner">
               <div id="aboutContactInterface">
-                <div id="aboutContactInterfaceTitle">
-                  <span>Arthurlot Li</span>
+                <div id="aboutContactInterfacePhoto">
+                  <img id="aboutContactInterfaceImg" src={require("../../../assets/about.jpg").default}/> 
                 </div>
+                <div id="aboutContactInterfaceInfo">
+                  <div id="aboutContactInterfaceTitle">
+                    <span>Arthurlot Li</span>
+                  </div>
+                  <div id="aboutContactInterfaceSubtitle"><i>Machine Learning Practitioner</i></div>
 
-                <div>
-                  Hello, this is my contact information. 
+                  <br/>
+                  <br/>
+
+                  <div id="aboutContactInterfaceText">
+                    <div id="aboutContactInterfaceTextInner">
+                      <div>Please feel free to contact me:</div>
+
+                      <div><a href="mailto:ArthurlotLi@gmail.com">ArthurlotLi@gmail.com</a></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -610,7 +665,33 @@ export class App extends React.Component {
 
               <div id="aboutInfoText">
                 <div>
-                  Here are all my citations. 
+                  <h2>Work Citations:</h2>
+
+                  <div>
+                    <b>MAESTRO Dataset</b> - <a target="_blank" href="https://magenta.tensorflow.org/datasets/maestro">https://magenta.tensorflow.org/datasets/maestro</a>
+                    <div>Published Paper (2018): <a target="_blank" href="https://arxiv.org/abs/1810.12247">https://arxiv.org/abs/1810.12247</a></div>
+                    <p>
+                    <div>Curtis Hawthorne, Andriy Stasyuk, Adam Roberts, Ian Simon, Cheng-Zhi Anna Huang,</div>
+                    <div>&emsp;Sander Dieleman, Erich Elsen, Jesse Engel, and Douglas Eck. "Enabling</div>
+                    <div>&emsp;Factorized Piano Music Modeling and Generation with the MAESTRO Dataset."</div>
+                    <div>&emsp;In International Conference on Learning Representations, 2019.</div>
+                    </p>
+                  </div>
+
+                  <hr/>
+
+                  <div>
+                    <b>Free Pats, Upright Piano KW Soundfont</b> - <a target="_blank" href="https://freepats.zenvoid.org/">https://freepats.zenvoid.org/</a>
+                  </div>
+
+                  <br/>
+
+                  <div id="aboutInfoTextSongs">
+                  </div>
+
+                  <br/>
+
+
                 </div>
               </div>
 
