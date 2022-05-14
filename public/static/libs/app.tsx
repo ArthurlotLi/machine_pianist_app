@@ -335,7 +335,11 @@ export class App extends React.Component {
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ "midi": encodedString, "generate_wav" : "1" })
+          body: JSON.stringify({ 
+            "midi": encodedString, 
+            "generate_wav" : "1", 
+            "filename" : this.state.displayedFileName.replace(".mid", "").replace(".midi", "") 
+          })
         };
         console.log("[DEBUG] Submitting request to cloud inference server with body:", requestOptions)
         var startTime = performance.now();

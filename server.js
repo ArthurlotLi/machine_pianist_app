@@ -53,7 +53,7 @@ app.post('/cloudInference/performMidi', async (req, res) => {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ "midi": req.body.midi, "generate_wav" : req.body.generate_wav })
+        body: JSON.stringify({ "midi": req.body.midi, "generate_wav" : req.body.generate_wav, "filename" : req.body.filename})
       };
       const response = await fetch(cloudInferenceServerURL + "/performMidi", requestOptions);
       var endTime = performance.now();
