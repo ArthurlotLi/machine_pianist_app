@@ -298,6 +298,9 @@ export class App extends React.Component {
     player.pause();
     this.showTool();
 
+    var selection = document.getElementById("toolInterfaceInput") as HTMLInputElement;
+    selection.value = null;
+
     var preloadSelect = document.getElementById("toolInterfacePreloadedSelect") as HTMLSelectElement
     preloadSelect.selectedIndex = 0
   }
