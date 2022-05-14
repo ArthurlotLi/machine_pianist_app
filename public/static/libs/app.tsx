@@ -676,7 +676,7 @@ export class App extends React.Component {
 
                   <div>
                     <b>MAESTRO Dataset</b> - <a target="_blank" href="https://magenta.tensorflow.org/datasets/maestro">https://magenta.tensorflow.org/datasets/maestro</a>
-                    <div>Published Paper (2018): <a target="_blank" href="https://arxiv.org/abs/1810.12247">https://arxiv.org/abs/1810.12247</a></div>
+                    <div>Published Paper (2019): <a target="_blank" href="https://arxiv.org/abs/1810.12247">https://arxiv.org/abs/1810.12247</a></div>
                     <p>
                     <div>Curtis Hawthorne, Andriy Stasyuk, Adam Roberts, Ian Simon, Cheng-Zhi Anna Huang,</div>
                     <div>&emsp;Sander Dieleman, Erich Elsen, Jesse Engel, and Douglas Eck. "Enabling</div>
