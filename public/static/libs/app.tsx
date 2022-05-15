@@ -526,7 +526,7 @@ export class App extends React.Component {
                   <label class="custom-file-upload">
                     <div id="toolInterfaceInputFilename">
                       <span id="toolInterfaceInputFilenameInner">
-                        {this.state.displayedFileName}
+                        {this.state.displayedFileName}&emsp;
                       </span>
                     </div>
                     <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
