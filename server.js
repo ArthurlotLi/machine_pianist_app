@@ -7,9 +7,10 @@
 const express = require("express");
 const path = require("path");
 const fetch = require("node-fetch");
+var session = require('express-session')
 //const proxy = require("http-proxy-middleware");
 
-const listeningPort = 8080;
+const listeningPort = 80;
 
 // Create the app
 const app = express();
@@ -31,6 +32,11 @@ app.use('/cloudInference', proxy.createProxyMiddleware({
   },  
 }))*/
 
+// Basic user statistics
+var uniqueSessions = 0;
+var views = 0;
+var submittedMidis = 0;
+
 // Whenever the request path has "static" inside of it, simply serve 
 // the static directory as you'd expect. 
 app.use("/static", express.static(path.resolve(__dirname, "public", "static")));
@@ -43,9 +49,21 @@ app.use(express.urlencoded({
   extended: true
 }));
 
+// Session Setup
+app.use(session({
+  // Secrete key for the session.
+  secret: 'machine pianist cat',
+  resave: false,
+  // Forces a session that is "uninitialized"
+  // to be saved to the store
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+
 // Alternative to proxy middleware.
  
 app.post('/cloudInference/performMidi', async (req, res) => {
+  submittedMidis++;
   console.log("[DEBUG] /performMidi POST request received. Body length: " + JSON.stringify(req.body).length);
   if(req.body.midi != null && req.body.generate_wav != null) {
     var startTime = performance.now();
@@ -79,11 +97,24 @@ app.post('/cloudInference/performMidi', async (req, res) => {
       return res.status(400).send();
     }
   }
+  console.log(`[INFO] Unique Sessions: ${uniqueSessions} |  Views: ${views} | Midis: ${submittedMidis}`)
 });
 
 // For the main (and only) page, serve the web application to the client. 
 app.get('/',(req,res) => {
-    res.sendFile(path.resolve(__dirname, "public", "index.html"));
+  views++;
+  if (req.session.views) {
+    // Old session. 
+    req.session.views++
+    console.log(`[INFO] Unique Sessions: ${uniqueSessions} |  Views: ${views} | Midis: ${submittedMidis}`)
+  } 
+  else{
+    // New session has started
+    uniqueSessions++;
+    req.session.views = 1;
+    console.log(`[INFO] Unique Sessions: ${uniqueSessions} |  Views: ${views} | Midis: ${submittedMidis}`)
+  }
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
 
 // Start the server to listen on this port.

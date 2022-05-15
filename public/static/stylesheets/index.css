@@ -36,7 +36,7 @@ body{
   padding-bottom: 10px;
   padding-left: 0;
   padding-right: 0;
-  height: min(max(4.5vw, 50px), 60px);
+  height: fit-content;
 }
 
 #headerInner{
@@ -44,17 +44,20 @@ body{
   max-height: 100%;
   margin: 0 auto;
   display: flex;
-  overflow: hidden;
+  height: fit-content;
 }
 
 #title{
   flex: 70%;
-  font-size: max(min(3.3vw, 45px), 35px);
   left: 0%;
-  padding-left: min(15px, 0.8%);
+  padding-left: min(15px, 1.1%);
   padding-top: 3px;
+  padding-bottom: 3px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   display:block;
   color:var(--secondary-color);
+  font-size: max(min(3.3vw, 45px), 25px);
 }
 
 #about{
@@ -70,7 +73,6 @@ body{
 }
 
 #aboutButton {
-  margin-top: 5px;
   flex: 50%;
   right:0;
   bottom: 0;
@@ -80,13 +82,14 @@ body{
   background-color: var(--button2-color);
   color: var(--secondary-color);
   font-size: 16px;
-  margin-top: max(min(1.0vw, 15px), 10px);
+  margin-top: min(1.0vw, 15px);
   padding-top: 5px;
   padding-bottom: 5px;
 }
 
 #mainBackground {
   width: 100%;
+  height: 1080px;
   position: absolute;
   left:0%;
   top: 0%;
@@ -97,6 +100,8 @@ body{
   width: min(100%, var(--max-total-width));
   max-height: 100%;
   margin: 0 auto;
+  overflow:hidden;
+  padding: 0px;
 }
 
 #mainBackgroundImg {
@@ -139,10 +144,10 @@ body{
 
 #toolInterfaceMidi{
   display: flex;
-  height: 35px;
   padding: 15px;
   padding-top: 0px;
-  padding-bottom: 0px;
+  padding-bottom: 15px;
+  height: fit-content;
 }
 
 input[type="file"] {
@@ -152,26 +157,19 @@ input[type="file"] {
   flex: 65%;
   border: 1px solid #ccc;
   display: inline-block;
-  padding-top: 6px;
   cursor: pointer;
   color: rgb(0, 0, 0);
   background-color: rgba(255, 255, 255, 0.9);
-  overflow:hidden;
   font-size: 16px;
   margin-right: 5px;
+  height: fit-content;
 }
-#toolInterfaceInputFilenameInner{
-  padding-left: 12px;
+#toolInterfaceInputFilename{
+  padding: 5px;
 }
 #toolInterfaceInput{
   background-color: var(--primary-color);
   color: var(--secondary-color);
-}
-#toolInterfaceButtonPerform{
-  flex: 25%;
-  background-color: var(--button1-color);
-  color: var(--secondary-color);
-  font-size: 16px;
 }
 
 #toolInterfaceOr{
@@ -182,31 +180,48 @@ input[type="file"] {
   margin-right: 7px;
   color: var(--primary-color);
   border: none;
+  height: fit-content;
 }
 
 #toolInterfacePreloaded{
   display: flex;
-  height: 35px;
   padding: 15px;
   padding-bottom: 0px;
+  height: fit-content;
+}
+#toolInterfacePreloadedSelectDiv{
+  flex: 65%;
+  margin-right: 5px;
+  height: 100%;
 }
 #toolInterfacePreloadedSelect{
-  flex: 65%;
   border: 1px solid #ccc;
-  display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
   color: rgb(0, 0, 0);
   background-color: rgba(255, 255, 255, 0.9);
-  overflow:hidden;
   font-size: 16px;
-  margin-right: 5px;
+  width: 100%;
+  height: 100%;
+}
+#toolInterfaceButtonPerform{
+  flex: 25%;
+  background-color: var(--button1-color);
+  color: var(--secondary-color);
+  font-size: 16px;
+  height: fit-content;
+  padding: 6px 12px;
+}
+#toolInterfaceButtonPerform2Div{
+  flex: 25%;
 }
 #toolInterfaceButtonPerform2{
-  flex: 25%;
   background-color: var(--button2-color);
   color: var(--secondary-color);
   font-size: 16px;
+  width: 100%;
+  height: fit-content;
+  padding: 6px 12px;
 }
 
 /* Tool 2 - Performance progress */
@@ -228,12 +243,17 @@ input[type="file"] {
 
 #toolProgressInterfaceText{
   font-size: 25px;
+  margin: 0 auto;
+  margin-top: 15px;
   width: 100%;
-  height: 100%;
+  padding: 10px;
+  height: 25px + 10px;
   text-align: center;
-  display: flex;
-  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   align-items: center;
+  justify-content: center;
 }
 
 /* Tool 3 - Playing a midi */
@@ -257,7 +277,7 @@ input[type="file"] {
   font-size: 25px;
   margin: 0 auto;
   width: 100%;
-  padding: 5px;
+  padding: 10px;
   height: 25px + 10px;
   text-align: center;
   overflow: hidden;
@@ -267,11 +287,12 @@ input[type="file"] {
 
 #toolPlayerInterfaceAudio{
   margin: 0 auto;
-  padding: 5px;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 #toolPlayerInterfacePerformance{
@@ -304,6 +325,7 @@ input[type="file"] {
   height: 30px;
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom: 10px;
 }
 #toolPlayerInterfaceReturnButton{
   background-color: var(--primary-color);
@@ -332,12 +354,14 @@ input[type="file"] {
 
 #charts{
   display: flex;
+  overflow:auto;
+  height: fit-content;
 }
 
 .chartImg{
-  flex: 33.33%;
-  padding: 5px;
-  width: min(25.33%, 500px);
+  flex: 0 0 auto;
+  padding: 0px;
+  width: max(33.33%, 350px);
   display: block;
   -webkit-backface-visibility: hidden; 
   -ms-transform: translateZ(0); /* IE 9 */
@@ -345,10 +369,11 @@ input[type="file"] {
   transform: translateZ(0);
 }
 
-#infotext{
+#infoText{
   margin-top: 0;
   margin-left: min(5%, 20px);
   margin-right: min(5%, 20px);
+  padding-top: 1px;
   padding-bottom: 20px;
   height: fit-content;
 }
@@ -377,6 +402,7 @@ input[type="file"] {
   margin-right: min(5%, 20px);
   padding-bottom: 20px;
   height: fit-content;
+  overflow-wrap:break-word;
 }
 
 /* Contact div */
@@ -399,7 +425,7 @@ input[type="file"] {
 #aboutContactInterface{
   background-color: rgba(0, 0, 0, 0.9);
   color: var(--secondary-color);
-  width: max(50%, 450px);
+  width: min(90%, 600px);
   margin: 0 auto;
   height: 200px;
   overflow: hidden;

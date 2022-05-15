@@ -17,9 +17,9 @@ const cloudInferenceMachinePianist = "/cloudInference/performMidi"
 const toolInterfaceStyleInitial = {
   backgroundColor: "rgba(0, 0, 0, 0.9)",
   color: "var(--secondary-color)",
-  width: "max(50%, 450px)",
+  width: "min(90%, 600px)",
   margin: "0 auto",
-  height: "140px",
+  height: "fit-content",
   display: "block",
   visibility: "visible",
   pointerEvents: "auto",
@@ -30,7 +30,7 @@ const toolInterfaceStyleInitial = {
 const toolProgressInterfaceStyleInitial = {
   backgroundColor: "rgba(0, 0, 0, 0.9)",
   color: "var(--secondary-color)",
-  width: "max(50%, 450px)",
+  width: "min(90%, 600px)",
   margin: "0 auto",
   height: "90px",
   display: "none",
@@ -43,9 +43,9 @@ const toolProgressInterfaceStyleInitial = {
 const toolPlayerInterfaceStyleInitial = {
   backgroundColor: "rgba(0, 0, 0, 0.9)",
   color: "var(--secondary-color)",
-  width: "max(50%, 450px)",
+  width: "min(90%, 600px)",
   margin: "0 auto",
-  height: "200px",
+  height: "fit-content",
   display: "none",
   visibility: "hidden",
   pointerEvents: "none",
@@ -64,8 +64,8 @@ const aboutStyleInitial = {
   pointerEvents: "none",
 }
 
-const defaultDisplayedFileName = "Select a .mid or .midi file to perform...";
-const defaultDisplayedSamplePerformance = { "-- Select a sample performance --": ""}
+const defaultDisplayedFileName = "Choose a MIDI file to perform...";
+const defaultDisplayedSamplePerformance = { "-- Select sample --": ""}
 
 // Small standard object to pass around to cite sample song locations. 
 class SamplePerformance {
@@ -507,11 +507,15 @@ export class App extends React.Component {
             <div id="toolInner">
               <div id="toolInterface" style={this.state.toolInterfaceStyle}>
 
-              <div id="toolInterfacePreloaded">
-                  <select id="toolInterfacePreloadedSelect" default="" onChange={evt => this.onPreloadedSelect(evt)}>
-                    {Object.keys(this.state.sampleSongDropdown).map((x,y) => <option key={y}>{x}</option>)}
-                  </select>
-                  <button id="toolInterfaceButtonPerform2" onClick={this.onPreloadedSelect}>Play Song</button>
+                <div id="toolInterfacePreloaded">
+                  <div  id="toolInterfacePreloadedSelectDiv">
+                    <select id="toolInterfacePreloadedSelect" default="" onChange={evt => this.onPreloadedSelect(evt)}>
+                      {Object.keys(this.state.sampleSongDropdown).map((x,y) => <option key={y}>{x}</option>)}
+                    </select>
+                  </div>
+                  <div id="toolInterfaceButtonPerform2Div">
+                    <button id="toolInterfaceButtonPerform2" onClick={this.onPreloadedSelect}>Listen</button>
+                  </div>
                 </div>
 
                 <div id="toolInterfaceOr">
@@ -527,7 +531,7 @@ export class App extends React.Component {
                     </div>
                     <input type="file" id="toolInterfaceInput" onChange={this.onFileChange} />
                   </label>
-                  <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Upload Midi</button>
+                  <button id="toolInterfaceButtonPerform" onClick={this.onPerformSong}>Upload MIDI</button>
                 </div>
 
               </div>
@@ -560,10 +564,10 @@ export class App extends React.Component {
                 <div id="toolPlayerInterfacePerformance">
                   <a id="toolPlayerInterfaceButtonSaveMp3Outer" href={this.state.performanceWav}
                     download={this.state.displayedFileName.replace(".mid", "").replace(".midi", "") + ".mp3"}>
-                    <button id="toolPlayerInterfaceButtonSaveMp3" >Download Mp3</button>
+                    <button id="toolPlayerInterfaceButtonSaveMp3" >Download MP3</button>
                   </a>
                   <button id="toolPlayerInterfaceButtonSaveMidi" onClick={this.onSaveMidi.bind(this)}>
-                    {this.state.citationUrl == null ? "Download Midi" : "Visit Source" }
+                    {this.state.citationUrl == null ? "Download MIDI" : "Visit Source" }
                   </button>
                 </div>
                 <div id = "toolPlayerInterfaceReturn">
@@ -577,19 +581,39 @@ export class App extends React.Component {
 
           <div id="info">
             <div id="infoInner">
-              <div id="charts">
-                <img class="chartImg" src={require("../../../assets/chart1.png").default}/>
-                <img id="chart2Img" class="chartImg" src={require("../../../assets/chart2.png").default}/>
-                <img id="chart3Img" class="chartImg" src={require("../../../assets/chart3.png").default}/>
-              </div>
-              <div id="infotext">
-                <h2>What makes a piano performance?</h2>
+              
+              <div id="infoText">
+                <h2>Perform your MIDI file with Artificial Intelligence</h2>
 
-                <div>How does a human play sheet music of a song that they've never heard before?
+                <div>This website provides the trained Machine Pianist model for public use. 
+                  Piano MIDI files <b>(.midi or .mid)</b> may be submitted to be played by the model, with the resulting performance being downloadable in both <b>MP3</b> and <b>MIDI</b> formats. 
                 </div>
+
                 <br/>
 
-                <div>This AI-powered tool was created under the conjecture that machine learning can encapsulate human tendencies in performing piano songs. 
+                <div>
+                  Please feel free to experiment, and see how the Machine Pianist stylizes your own arrangements! 
+                </div>
+
+                <br/>
+
+                <hr/>
+
+                <div id="charts">
+                  <img class="chartImg" src={require("../../../assets/chart1.png").default}/>
+                  <img id="chart2Img" class="chartImg" src={require("../../../assets/chart2.png").default}/>
+                  <img id="chart3Img" class="chartImg" src={require("../../../assets/chart3.png").default}/>
+                </div>
+
+                <hr/>
+
+                <h2>Using Machine Learning to emulate human pianists</h2>
+
+                <div>How does a human play sheet music of a song that they've never heard before?</div>
+
+                <br/>
+
+                <div>This AI-powered tool was created under the hypothesis that machine learning can encapsulate human tendencies in performing piano songs. 
                   The final model, trained for weeks with the performances of expert musicians, is able to synthesize some of the key "humanizing" components of a live performance.
                   These aspects include:</div>
 
@@ -601,36 +625,25 @@ export class App extends React.Component {
                 <div>
                   Piano playing software in online websites, installed applications, and shipped pianos simply follow instructions to the letter, without making such subjective choices.
                   As such, these performances may sound robotic and unnatural at times, without the flowing nuance of a trained musician. 
-                  The task for this project was thus: given an arbitrary piano piece, predict key velocities and pedal positions to produce a more human-sounding performance.
+                  The task for this project was thus: 
                 </div>
 
                 <br/>
-
-                <div>
-                  The predicted velocities and sustain pedal positions of this model are shown in plot diagrams on this page. 
-                </div>
-
-                <h2>The Machine Pianist website</h2>
-
-                <div>This website provides the trained Machine Pianist model for public use. 
-                  Any .midi or .mid files may be submitted to be "performed" by the model, with the results downloadable in both Mp3 and Midi formats. 
-                </div>
+                  
+                <div>Given an <b>arbitrary piano piece</b>, predict <b>key velocities</b> and <b>sustain pedal positions</b> to produce a more human-sounding performance.</div>
 
                 <br/>
 
-                <div>
-                  Please feel free to experiment, and see how the Machine Pianist stylizes your own arrangements! 
-                </div>
-
-                <br/>
-
-                <br/>
+                <hr/>
 
                 <div id="charts">
                   <img class="chartImg" src={require("../../../assets/chart4.png").default}/>
                   <img id="chart2Img" class="chartImg" src={require("../../../assets/chart5.png").default}/>
                   <img id="chart3Img" class="chartImg" src={require("../../../assets/chart6.png").default}/>
                 </div>
+
+                <hr/>
+                
               </div>
 
             </div>
