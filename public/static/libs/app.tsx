@@ -114,6 +114,18 @@ const sampleSongObjects = [
   new SamplePerformance("Take me to Church", 
     "../../../assets/church.mp3",
     "https://musescore.com/user/1055536/scores/3974821"),
+  new SamplePerformance("My Future", 
+    "../../../assets/my future.mp3",
+    "https://musescore.com/user/21066206/scores/6279281"),
+  new SamplePerformance("Victorious", 
+    "../../../assets/victorious.mp3",
+    "https://musescore.com/user/1010896/scores/1379111"),
+  new SamplePerformance("Shape of You", 
+    "../../../assets/shape of you.mp3",
+    "https://musescore.com/user/3435661/scores/3798956"),
+  new SamplePerformance("As the World Caves In", 
+    "../../../assets/world caves in.mp3",
+    "https://musescore.com/user/34899578/scores/6109689"),
   new SamplePerformance("Grant's Etude", 
     "../../../assets/blue brown.mp3",
     "https://musescore.com/user/3448751/scores/6091506"),
@@ -123,9 +135,30 @@ const sampleSongObjects = [
   new SamplePerformance("Megalovania", 
     "../../../assets/megalovania.mp3",
     "https://musescore.com/user/2315121/scores/1673431"),
+  new SamplePerformance("Attack of the Killer Queen", 
+    "../../../assets/queen.mp3",
+    "https://musescore.com/user/8284836/scores/7021628"),
+  new SamplePerformance("Big Shot", 
+    "../../../assets/big shot.mp3",
+    "https://musescore.com/user/6765551/scores/7021713"),
   new SamplePerformance("Rush E (Duet)", 
     "../../../assets/rush.mp3",
     "https://musescore.com/user/38680685/scores/7024059"),
+  new SamplePerformance("Mii Channel", 
+    "../../../assets/channel.mp3",
+    "https://musescore.com/user/1801321/scores/3556616"),
+  new SamplePerformance("Gerudo Valley (Duet)", 
+    "../../../assets/valley.mp3",
+    "https://musescore.com/user/8784906/scores/3563316"),
+  new SamplePerformance("The Shire", 
+    "../../../assets/shire.mp3",
+    "https://musescore.com/denburel/scores/4192636"),
+  new SamplePerformance("Deepest Woods", 
+    "../../../assets/deepest woods.mp3",
+    "https://musescore.com/user/36763129/scores/6512336"),
+  new SamplePerformance("Chance Meeting with Myself", 
+    "../../../assets/chance.mp3",
+    "https://musescore.com/user/5771531/scores/5069419"),
   new SamplePerformance("Waltz in A Minor", 
     "../../../assets/waltz.mp3",
     "https://musescore.com/user/4609986/scores/1749181"),
@@ -592,7 +625,7 @@ export class App extends React.Component {
                 <br/>
 
                 <div>
-                  Please feel free to experiment, and see how the Machine Pianist stylizes your own arrangements! 
+                  Feel free to experiment, and see how the Machine Pianist stylizes your own arrangements! 
                 </div>
 
                 <br/>
@@ -609,7 +642,7 @@ export class App extends React.Component {
 
                 <h2>Using Machine Learning to emulate human pianists</h2>
 
-                <div>How does a human play sheet music of a song that they've never heard before?</div>
+                <div>How does a human play sheet music of a song that they've never heard before? </div>
 
                 <br/>
 

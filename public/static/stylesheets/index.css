@@ -51,13 +51,13 @@ body{
   flex: 70%;
   left: 0%;
   padding-left: min(15px, 1.1%);
-  padding-top: 3px;
+  padding-top: 0px;
   padding-bottom: 3px;
-  margin-top: 0px;
+  margin-top: min(1.0vw, 5px);
   margin-bottom: 0px;
   display:block;
   color:var(--secondary-color);
-  font-size: max(min(3.3vw, 45px), 25px);
+  font-size: max(min(3.3vw, 45px), 26px);
 }
 
 #about{
@@ -284,7 +284,8 @@ input[type="file"] {
   font-size: 25px;
   margin: 0 auto;
   width: 100%;
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   height: 25px + 10px;
   text-align: center;
   overflow: hidden;

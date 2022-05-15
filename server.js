@@ -60,6 +60,10 @@ app.use(session({
   cookie: { secure: false }
 }))
 
+const log_statistics = function(){
+  console.log(`[INFO] ${new Date().toISOString()} | Unique Sessions: ${uniqueSessions} | Views: ${views} | Midis: ${submittedMidis}`)
+}
+
 // Alternative to proxy middleware.
  
 app.post('/cloudInference/performMidi', async (req, res) => {
@@ -97,7 +101,7 @@ app.post('/cloudInference/performMidi', async (req, res) => {
       return res.status(400).send();
     }
   }
-  console.log(`[INFO] Unique Sessions: ${uniqueSessions} |  Views: ${views} | Midis: ${submittedMidis}`)
+  log_statistics();
 });
 
 // For the main (and only) page, serve the web application to the client. 
@@ -106,14 +110,13 @@ app.get('/',(req,res) => {
   if (req.session.views) {
     // Old session. 
     req.session.views++
-    console.log(`[INFO] Unique Sessions: ${uniqueSessions} |  Views: ${views} | Midis: ${submittedMidis}`)
   } 
   else{
     // New session has started
     uniqueSessions++;
     req.session.views = 1;
-    console.log(`[INFO] Unique Sessions: ${uniqueSessions} |  Views: ${views} | Midis: ${submittedMidis}`)
   }
+  log_statistics();
   res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
 
