@@ -8,7 +8,7 @@ With this application, the following features will be provided:
 2. Users may listen to the AI performance on the website.
 3. Users may save the AI performance as a MIDI or mp3.
 
-To use the publicly deployed model, please see the [Machine Pianist](http://machinepianist.com/) website.
+For more information, please see the [Machine Pianist](http://machinepianist.com/) website.
 
 [![Machine Pianist Website](https://i.imgur.com/LGDfsGb.png "Machine Pianist Website")](http://machinepianist.com/)
 
