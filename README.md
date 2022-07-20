@@ -4,9 +4,9 @@ This repository hosts the web application component of the Machine Pianist proje
 
 With this application, the following features will be provided:
 
-A. Users may upload MIDI files to be performed. 
-B. Users may listen to the AI performance on the website.
-C. Users may save the AI performance as a MIDI or mp3.
+1. Users may upload MIDI files to be performed. 
+2. Users may listen to the AI performance on the website.
+3. Users may save the AI performance as a MIDI or mp3.
 
 To use the publicly deployed model, please see the [Machine Pianist](http://machinepianist.com/) website.
 
